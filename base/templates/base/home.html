@@ -1,0 +1,15 @@
+{% load static %}
+<html>
+<head>
+    <link rel='stylesheet' href="{% static 'base/css/bootstrap.min.css' %}" type='text/css'>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 style="text-align: center;"><span style="color: #007bff;">Home</span></h1>
+        <p>Go to dashboard...<a href="/dashboard">Dashboard</a> </p>
+        <p>Already have an account? <a href="/login">Login</a> </p>
+        <p>Want to create an account? <a href="/register">Register</a> </p>
+    </div>
+<script src="{% static 'base/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

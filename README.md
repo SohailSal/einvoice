@@ -1,0 +1,3 @@
+MZ E-Invoice is the FBR compliant e-invoicing software which is developed by Digital Solutions Department of Muniff Ziauddin & Co. Chartered Accountants. This is the base repository where key blocks of the invoicing software are kept. This forms base to deliver customized invoicing solutions to our clientele. The technology stack comprise of Django (Python), Bootstrap and AlpineJS. 
+See INSTALL.md for installation instructions.
+We can be contacted through dsd@mzco.com.pk

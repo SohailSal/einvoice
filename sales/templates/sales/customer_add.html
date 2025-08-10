@@ -1,0 +1,123 @@
+{% extends "base/base.html" %}
+{% block title %} Add Customer {% endblock %}
+{% block mainhead %} Sales {% endblock %}
+{% block subhead %} Add Customer {% endblock %}
+{% block content %}
+
+<div x-data="handler()" x-cloak>
+  <form class="row g-3" id="customerForm" @submit.prevent="submit">
+      <template x-if="errors">
+        <div class="d-flex flex-row">
+          <ul class="alert alert-danger">
+            <template x-for="(error, index) in errors">
+                <li class="mx-3"><strong><span x-text="index"></strong></span>: <span x-text="error"></span></li>
+            </template>
+         </ul>
+         <button type="button" class="btn-close" @click="hideMsg"></button>
+        </div>
+      </template>
+      <div x-show="msgShow" x-transition.duration.600ms>
+        <template x-if="messages">
+          <div class="d-flex flex-row">
+            <ul class="alert alert-success">
+              <template x-for="(message, index) in messages">
+                  <li class="mx-3"><strong><span x-text="index"></strong></span>: <span x-text="message"></span></li>
+              </template>
+            </ul>
+            <button type="button" class="btn-close" @click="hideMsg"></button>
+          </div>
+        </template>
+      </div>
+      <div class="col-md-12">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="save_fields" x-model="save">
+          <label class="form-check-label" for="save_fields">Retain the fields data after save</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" x-model="name" class="form-control form-control-sm" id="name">
+      </div>
+      <div class="col-md-4">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" x-model="email" class="form-control form-control-sm" id="email">
+      </div>
+      <div class="col-md-4">
+        <label for="phone" class="form-label">Phone</label>
+        <input type="text" x-model="phone" class="form-control form-control-sm" id="phone">
+      </div>
+      <div class="col-12">
+        <label for="address" class="form-label">Address</label>
+        <input type="textarea" x-model="address" class="form-control form-control-sm" id="address">
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-sm btn-primary" :disabled="formLoading" x-text="submitText"></button>
+      </div>
+    </form>
+  </div>
+
+<script>
+  function handler() {
+  return {
+      messages: '',
+      errors: '',
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      formLoading: false,
+      submitText: 'Insert Customer',
+      save: false,
+      msgShow: false,
+
+      submit(event) {
+          event.preventDefault();
+          this.formLoading = true;
+          this.submitText = 'Submitting...';
+          const endpointUrl = "customer_post"
+          fetch(endpointUrl, {
+              method: "post",
+              body: JSON.stringify({
+                  name: this.name,
+                  email: this.email,
+                  phone: this.phone,
+                  address: this.address,
+              }),
+              headers: {
+                  'X-CSRFToken': '{{ csrf_token }}',
+              },
+          })
+          .then(response => {
+              return response.json();
+          })
+          .then(data => {
+            this.errors = data.errors
+            this.messages = data.messages
+            if(!this.errors){
+              this.msgShow = true
+              setTimeout(() => this.msgShow = false, 4000)
+              if (!this.save) {
+                this.name = ''
+                this.email = ''
+                this.phone = ''
+                this.address = ''
+              }
+            }
+          })
+          .finally(()=>{
+              this.formLoading = false;
+              this.submitText = 'Insert Customer';
+          });
+      },
+      hideMsg(){
+          this.errors = ''
+          this.messages = ''
+          this.msgShow = false
+      }
+    }
+  }
+</script>
+<style>
+  [x-cloak] {display: none !important;  }
+</style>
+{% endblock %}

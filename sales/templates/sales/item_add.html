@@ -1,0 +1,137 @@
+{% extends "base/base.html" %}
+{% block title %} Add Item {% endblock %}
+{% block mainhead %} Inventory {% endblock %}
+{% block subhead %} Add Item {% endblock %}
+{% block content %}
+
+<div x-data="handler()" x-cloak>
+  <form class="row g-3" id="itemForm" @submit.prevent="submit">
+      <template x-if="errors">
+        <div class="d-flex flex-row">
+          <ul class="alert alert-danger">
+            <template x-for="(error, index) in errors">
+                <li class="mx-3"><strong><span x-text="index"></strong></span>: <span x-text="error"></span></li>
+            </template>
+         </ul>
+         <button type="button" class="btn-close" @click="hideMsg"></button>
+        </div>
+      </template>
+      <div x-show="msgShow" x-transition.duration.600ms>
+        <template x-if="messages">
+          <div class="d-flex flex-row">
+            <ul class="alert alert-success">
+              <template x-for="(message, index) in messages">
+                  <li class="mx-3"><strong><span x-text="index"></strong></span>: <span x-text="message"></span></li>
+              </template>
+            </ul>
+            <button type="button" class="btn-close" @click="hideMsg"></button>
+          </div>
+        </template>
+      </div>
+      <div class="col-md-12">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="save_fields" x-model="save">
+          <label class="form-check-label" for="save_fields">Retain the fields data after save</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" x-model="name" class="form-control form-control-sm" id="name">
+      </div>
+      <div class="col-md-4">
+        <label for="unit" class="form-label">Unit</label>
+        <input type="text" x-model="unit" class="form-control form-control-sm" id="unit">
+      </div>
+      <div class="col-12">
+        <label for="description" class="form-label">Description</label>
+        <input type="textarea" x-model="description" class="form-control form-control-sm" id="description">
+      </div>
+      <div class="col-md-4">
+        <label for="purchase_rate" class="form-label">Purchase Rate</label>
+        <input type="number" x-model="purchase_rate" class="form-control form-control-sm" id="purchase_rate">
+      </div>
+      <div class="col-md-4">
+        <label for="sale_rate" class="form-label">Sale Rate</label>
+        <input type="number" x-model="sale_rate" class="form-control form-control-sm" id="sale_rate">
+      </div>
+      <div class="col-md-4">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" x-model="quantity" class="form-control form-control-sm" id="quantity">
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-sm btn-primary" :disabled="formLoading" x-text="submitText"></button>
+      </div>
+    </form>
+  </div>
+
+<script>
+  function handler() {
+  return {
+      messages: '',
+      errors: '',
+      name: '',
+      unit: '',
+      description: '',
+      purchase_rate: '',
+      sale_rate: '',
+      quantity: '',
+      formLoading: false,
+      submitText: 'Insert Item',
+      save: false,
+      msgShow: false,
+
+      submit(event) {
+          event.preventDefault();
+          this.formLoading = true;
+          this.submitText = 'Submitting...';
+          const endpointUrl = "item_post"
+          fetch(endpointUrl, {
+              method: "post",
+              body: JSON.stringify({
+                  name: this.name,
+                  unit: this.unit,
+                  description: this.description,
+                  purchase_rate: this.purchase_rate,
+                  sale_rate: this.sale_rate,
+                  quantity: this.quantity,
+              }),
+              headers: {
+                  'X-CSRFToken': '{{ csrf_token }}',
+              },
+          })
+          .then(response => {
+              return response.json();
+          })
+          .then(data => {
+            this.errors = data.errors
+            this.messages = data.messages
+            if(!this.errors){
+              this.msgShow = true
+              setTimeout(() => this.msgShow = false, 4000)
+              if (!this.save) {
+                this.name = ''
+                this.unit = ''
+                this.description = ''
+                this.purchase_rate = ''
+                this.sale_rate = ''
+                this.quantity = ''
+              }
+            }
+          })
+          .finally(()=>{
+              this.formLoading = false;
+              this.submitText = 'Insert Item';
+          });
+      },
+      hideMsg(){
+          this.errors = ''
+          this.messages = ''
+          this.msgShow = false
+      }
+    }
+  }
+</script>
+<style>
+  [x-cloak] {display: none !important;  }
+</style>
+{% endblock %}

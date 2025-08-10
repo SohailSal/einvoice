@@ -1,0 +1,62 @@
+[
+  {
+    "model": "sales.customer",
+    "pk": 1,
+    "fields": {
+      "ntn_cnic": "0815616",
+      "phone": "021-1234567",
+      "name": "Cnergyico Pk Limited",
+      "province": "Sindh",
+      "address": "The Harbour Front 9th Floor,Dolmen City HC-3 Block 04,Marine Drive  Clifton,Karachi",
+      "registration_type": "Registered"
+    }
+  },
+  {
+    "model": "sales.item",
+    "pk": 1,
+    "fields": {
+      "hs_code": "5904.9000",
+      "description": "test item",
+      "uo_m": "Square Metre",
+      "purchase_rate": 100,
+      "sale_rate": 120,
+      "quantity": 200
+    }
+  },
+  {
+    "model": "sales.invoice",
+    "pk": 1,
+    "fields": {
+        "invoice_type": "Sale Invoice",
+        "invoice_date": "2025-04-21",
+        "invoice_number": "INV-202507-001",
+        "invoice_number_fbr": "",
+        "customer": 1,
+        "invoice_ref_no": "",
+        "scenario_id": "SN028"
+    }
+  },
+  {
+    "model": "sales.invoiceitem",
+    "pk": 1,
+    "fields": {
+        "invoice": 1,
+        "item": 1,
+        "rate": "4.5%",
+        "uo_m": "Square Metre",
+        "quantity": 1,
+        "total_values": 0,
+        "value_sales_excluding_st": 1000,
+        "fixed_notified_value_or_retail_price": 0,
+        "sales_tax_applicable": 45,
+        "sales_tax_withheld_at_source": 0,
+        "extra_tax": 0,
+        "further_tax": 120,
+        "sro_schedule_no": "EIGHTH SCHEDULE Table 1",
+        "fed_payable": 0,
+        "discount": 0,
+        "sale_type": "Goods at Reduced Rate",
+        "sro_item_serial_no": "67"
+    }
+  }
+]

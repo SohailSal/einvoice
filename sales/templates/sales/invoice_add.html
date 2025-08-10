@@ -1,0 +1,220 @@
+{% extends "base/base.html" %}
+{% block title %} Add Invoice {% endblock %}
+{% block mainhead %} Sales {% endblock %}
+{% block subhead %} Add Invoice {% endblock %}
+{% block content %}
+
+<div x-data="handler()" x-cloak>
+  <form class="row g-3" id="invoiceForm" @submit.prevent="submit">
+      <template x-if="errors">
+        <div class="d-flex flex-row">
+          <ul class="alert alert-danger">
+            <template x-for="(error, index) in errors">
+                <li class="mx-3"><strong><span x-text="index"></strong></span>: <span x-text="error"></span></li>
+            </template>
+         </ul>
+         <button type="button" class="btn-close" @click="hideMsg"></button>
+        </div>
+      </template>
+      <div x-show="msgShow" x-transition.duration.600ms>
+        <template x-if="messages">
+          <div class="d-flex flex-row">
+            <ul class="alert alert-success">
+              <template x-for="(message, index) in messages">
+                  <li class="mx-3"><strong><span x-text="index"></strong></span>: <span x-text="message"></span></li>
+              </template>
+            </ul>
+            <button type="button" class="btn-close" @click="hideMsg"></button>
+          </div>
+        </template>
+      </div>
+      <div class="col-md-12">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="save_fields" x-model="save">
+          <label class="form-check-label" for="save_fields">Retain the fields data after save</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label for="invoice_date" class="form-label">Invoice Date</label>
+        <input type="date" x-model="invoice_date" class="form-control form-control-sm" id="invoice_date" min="{{start_date}}" max="{{end_date}}">
+      </div>
+      <div class="col-md-4">
+        <label for="customer" class="form-label">Customer</label>
+        <select x-model="customer" id="customer">
+          <option value="0" selected>Cash sales:</option>
+          <template x-for="option in {{customers}}" :key="option.id">
+              <option :value="option.id" x-text="option.name"></option>
+          </template>
+        </select>
+      </div>
+      <div class="col-12">
+        <label for="description" class="form-label">description</label>
+        <input type="textarea" x-model="description" class="form-control form-control-sm" id="description">
+      </div>
+
+
+      <div class="col-12">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Rate</th>
+                <th scope="col">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(entry, index) in entries" :key="index" 
+              x-init=" $nextTick(() => { slim() })
+              $watch('counter', () => { slim() })">
+
+              <tr>
+                <td scope="row">    
+                  <select x-model="entry.item" @change="getRate(entry.item, index)" :id="$id('stock')">
+                    <option value="0" selected>Select item:</option>
+                    <template x-for="option in {{items}}" :key="option.id">
+                        <option :value="option.id" x-text="option.name"></option>
+                    </template>
+                  </select>
+                </td>
+                <td><input x-model="entry.quantity" type="number" class="form-control form-control-sm" @change="updateFields(index)"></td>
+                <td><input x-model="entry.rate" type="number" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.amount" type="number" class="form-control form-control-sm" readonly></td>
+                <td><template x-if="index>0"><button type="button" class="btn btn-sm btn-danger" @click="removeEntry(index)">&times;</button></template></td>
+              </tr>
+              </template>
+            </tbody>
+            <tfoot>
+                <tr>
+                  <td colspan="4"><button type="submit" class="btn btn-sm btn-primary" :disabled="formLoading" x-text="submitText"></button><button type="button" class="btn btn-sm btn-secondary mx-4" @click="addEntry()">Add Entry Row</button></td>
+                </tr>
+            </tfoot>
+        </table>
+     </div>
+
+    </form>
+  </div>
+
+<script>
+  new SlimSelect({
+      select: "#customer"
+  })
+</script>
+   
+<script>
+  function handler() {
+  return {
+      messages: '',
+      errors: '',
+      invoice_date: '{{start_date}}',
+      customer: '',
+      description: '',
+      formLoading: false,
+      submitText: 'Insert Invoice',
+      save: false,
+      msgShow: false,
+      entries: [{
+            item: 0,
+            quantity: null,
+            rate: null,
+            amount: null,
+            }],
+      counter: 1,
+
+      slim(){
+        var str1 = "#stock-"+this.counter
+        console.log(str1)
+        new SlimSelect({
+          select: str1
+        })
+      },
+
+      addEntry() {
+        this.entries.push({
+          item: 0,
+          quantity: null,
+          rate: null,
+          amount: null,
+        })
+        this.counter = this.counter + 1
+      },
+      removeEntry(index) {
+          this.entries.splice(index, 1);
+      },
+
+      submit(event) {
+          event.preventDefault();
+          this.formLoading = true;
+          this.submitText = 'Submitting...';
+          const endpointUrl = "invoice_post"
+          fetch(endpointUrl, {
+              method: "post",
+              body: JSON.stringify({
+                  entries: this.entries,
+                  invoice_date: this.invoice_date,
+                  customer: this.customer,
+                  description: this.description,
+              }),
+              headers: {
+                  'X-CSRFToken': '{{ csrf_token }}',
+              },
+          })
+          .then(response => {
+              return response.json();
+          })
+          .then(data => {
+            this.errors = data.errors
+            this.messages = data.messages
+            if(!this.errors){
+              this.msgShow = true
+              setTimeout(() => this.msgShow = false, 1000)
+              if (!this.save) {
+                setTimeout(() => location.reload() = false, 1500)
+              }
+            }
+          })
+          .finally(()=>{
+              this.formLoading = false;
+              this.submitText = 'Insert Invoice';
+          });
+      },
+      hideMsg(){
+          this.errors = ''
+          this.messages = ''
+          this.msgShow = false
+      },
+      getRate(item,index){
+        console.log(item)
+        if(item == 0){
+          this.entries[index].rate = null
+          this.updateFields(index)
+        }
+        else{
+        fetch('getRate', {
+              method: "post",
+              body: JSON.stringify({
+                item:item,
+              }),
+              headers: {
+                  'X-CSRFToken': '{{ csrf_token }}',
+              },
+          })
+          .then(response => {
+              return response.json();
+          })
+          .then(data => {
+            this.entries[index].rate = data.rate
+            this.updateFields(index)
+          })
+        }
+      },
+      updateFields(i){
+          this.entries[i].amount = this.entries[i].quantity * this.entries[i].rate
+      }
+    }
+  }
+</script>
+<style>
+  [x-cloak] {display: none !important;  }
+</style>
+{% endblock %}

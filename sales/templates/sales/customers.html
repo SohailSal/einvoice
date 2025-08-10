@@ -1,0 +1,52 @@
+{% extends "base/base.html" %}
+{% block title %} Customers {% endblock %}
+{% block mainhead %} Sales {% endblock %}
+{% block subhead %} Customers {% endblock %}
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-info">
+            <strong>{{ message|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div>
+  <a href="{% url 'sales:customer_add' %}" class="btn btn-outline-primary btn-sm">Add Customer</a>
+</div>
+<div class="">
+  <table class="table table-striped table-sm" id="myTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in customers %}
+      <tr>
+        <td>{{ customer.id }}</td>
+        <td>{{ customer.name }}</td>
+        <td>{{ customer.phone }}</td>
+        <td>
+          <div class="row row-cols-lg-auto">
+            <a href="{% url 'sales:customer_edit' customer.id %}" class="btn btn-outline-secondary btn-sm">Update</a>
+            <form action="{% url 'sales:customer_delete' customer.pk %}" method="post" class="">
+              {% csrf_token %}
+              <input type="submit" value="Delete" class="btn btn-outline-danger btn-sm"/>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script>
+  let table = new DataTable('#myTable');
+</script>
+
+{% endblock %}

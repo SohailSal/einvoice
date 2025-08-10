@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+{% block title %} Edit Item {% endblock %}
+{% block mainhead %} Inventory {% endblock %}
+{% block subhead %} Edit Item {% endblock %}
+{% block content %}
+
+<form action="{% url 'sales:item_edit_post' %}" method="post" class="row gx-3 gy-2 align-items-end" >
+{% csrf_token %}
+
+{% if messages %}
+<div class="alert alert-primary" role="alert">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+    <input name="id" value="{{item.id}}" hidden>
+    <div class="col-sm-4">
+        <label for="name" class="col-form-label">Name</label>
+        <input type="text" class="form-control form-control-sm" id="name" value="{{item.name}}" name="name">
+    </div>
+    <div class="col-sm-4">
+        <label for="unit" class="form-label">Unit</label>
+        <input type="text" class="form-control form-control-sm" id="unit" value="{{item.unit}}" name="unit">
+    </div>
+    <div class="col-12">
+        <label for="description" class="form-label">Description</label>
+        <input type="textarea" class="form-control form-control-sm" id="description" value="{{item.description}}" name="description">
+    </div>
+    <div class="col-sm-4">
+        <label for="purchase_rate" class="form-label">Purchase Rate</label>
+        <input type="number" class="form-control form-control-sm" id="purchase_rate" value="{{item.purchase_rate}}" name="purchase_rate">
+    </div>
+    <div class="col-sm-4">
+        <label for="sale_rate" class="form-label">Sale Rate</label>
+        <input type="number" class="form-control form-control-sm" id="sale_rate" value="{{item.sale_rate}}" name="sale_rate">
+    </div>
+    <div class="col-sm-4">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control form-control-sm" id="quantity" value="{{item.quantity}}" name="quantity">
+    </div>
+    <div class="col-sm-12">
+        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+    </div>
+</form>
+
+{% endblock %}

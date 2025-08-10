@@ -1,0 +1,40 @@
+{% extends "base/base.html" %}
+{% block title %} Edit Customer {% endblock %}
+{% block mainhead %} Sales {% endblock %}
+{% block subhead %} Edit Customer {% endblock %}
+{% block content %}
+
+<form action="{% url 'sales:customer_edit_post' %}" method="post" class="row gx-3 gy-2 align-items-end" >
+{% csrf_token %}
+
+{% if messages %}
+<div class="alert alert-primary" role="alert">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+    <input name="id" value="{{customer.id}}" hidden>
+    <div class="col-sm-4">
+        <label for="name" class="col-form-label">Name</label>
+        <input type="text" class="form-control form-control-sm" id="name" value="{{customer.name}}" name="name">
+    </div>
+    <div class="col-sm-4">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control form-control-sm" id="email" value="{{customer.email}}" name="email">
+    </div>
+    <div class="col-sm-4">
+        <label for="phone" class="form-label">Phone</label>
+        <input type="text" class="form-control form-control-sm" id="phone" value="{{customer.phone}}" name="phone">
+    </div>
+    <div class="col-12">
+        <label for="address" class="form-label">Address</label>
+        <input type="textarea" class="form-control form-control-sm" id="address" value="{{customer.address}}" name="address">
+    </div>
+    <div class="col-sm-12">
+        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+    </div>
+</form>
+
+{% endblock %}
