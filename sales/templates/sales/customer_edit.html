@@ -16,21 +16,29 @@
 {% endif %}
 
     <input name="id" value="{{customer.id}}" hidden>
-    <div class="col-sm-4">
+    <div class="col-sm-6">
         <label for="name" class="col-form-label">Name</label>
         <input type="text" class="form-control form-control-sm" id="name" value="{{customer.name}}" name="name">
     </div>
-    <div class="col-sm-4">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control form-control-sm" id="email" value="{{customer.email}}" name="email">
-    </div>
-    <div class="col-sm-4">
+    <div class="col-sm-6">
         <label for="phone" class="form-label">Phone</label>
         <input type="text" class="form-control form-control-sm" id="phone" value="{{customer.phone}}" name="phone">
     </div>
-    <div class="col-12">
+    <div class="col-sm-6">
+        <label for="ntn_cnic" class="form-label">NTN / CNIC</label>
+        <input type="text" class="form-control form-control-sm" id="ntn_cnic" value="{{customer.ntn_cnic}}" name="ntn_cnic">
+    </div>
+    <div class="col-sm-6">
+        <label for="province" class="form-label">Province</label>
+        <input type="text" class="form-control form-control-sm" id="province" value="{{customer.province}}" name="province">
+    </div>
+    <div class="col-sm-12">
         <label for="address" class="form-label">Address</label>
         <input type="textarea" class="form-control form-control-sm" id="address" value="{{customer.address}}" name="address">
+    </div>
+    <div class="col-sm-12">
+        <label for="registration_type" class="form-label">Registration Type</label>
+        <input type="text" class="form-control form-control-sm" id="registration_type" value="{{customer.registration_type}}" name="registration_type">
     </div>
     <div class="col-sm-12">
         <button type="submit" class="btn btn-sm btn-primary">Save</button>

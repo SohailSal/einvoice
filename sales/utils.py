@@ -17,7 +17,7 @@ from datetime import datetime
 
 def generate_invoice_number(d):
     chunks = []
-    document = get_object_or_404(Document, pk=2)
+    document = get_object_or_404(Invoice, pk=2)
     prefix = document.prefix
     dt = datetime.strptime(d,'%Y-%m-%d')
     year = dt.strftime("%Y")
@@ -65,7 +65,7 @@ def generate_invoice(id):
     c.drawString(30, h, company_address)
     c.drawString(300, h, invoice.customer.name)
     h = h-20
-    c.drawString(30, h, company_contact)
+    c.drawString(30, h, company_province)
     c.drawString(300, h, invoice.customer.address)
     h = h-30
     c.drawString(30, h, f"Invoice Number: {invoice.invoice_number}")

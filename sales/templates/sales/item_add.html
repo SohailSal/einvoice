@@ -34,17 +34,17 @@
           <label class="form-check-label" for="save_fields">Retain the fields data after save</label>
         </div>
       </div>
-      <div class="col-md-4">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" x-model="name" class="form-control form-control-sm" id="name">
-      </div>
-      <div class="col-md-4">
-        <label for="unit" class="form-label">Unit</label>
-        <input type="text" x-model="unit" class="form-control form-control-sm" id="unit">
-      </div>
       <div class="col-12">
         <label for="description" class="form-label">Description</label>
         <input type="textarea" x-model="description" class="form-control form-control-sm" id="description">
+      </div>
+      <div class="col-md-4">
+        <label for="hs_code" class="form-label">HS Code</label>
+        <input type="text" x-model="hs_code" class="form-control form-control-sm" id="hs_code">
+      </div>
+      <div class="col-md-4">
+        <label for="uo_m" class="form-label">Unit of Measurement</label>
+        <input type="text" x-model="uo_m" class="form-control form-control-sm" id="uo_m">
       </div>
       <div class="col-md-4">
         <label for="purchase_rate" class="form-label">Purchase Rate</label>
@@ -69,14 +69,14 @@
   return {
       messages: '',
       errors: '',
-      name: '',
-      unit: '',
+      hs_code: '',
+      uo_m: '',
       description: '',
       purchase_rate: '',
       sale_rate: '',
       quantity: '',
       formLoading: false,
-      submitText: 'Insert Item',
+      submitText: 'Save Item',
       save: false,
       msgShow: false,
 
@@ -88,8 +88,8 @@
           fetch(endpointUrl, {
               method: "post",
               body: JSON.stringify({
-                  name: this.name,
-                  unit: this.unit,
+                  hs_code: this.hs_code,
+                  uo_m: this.uo_m,
                   description: this.description,
                   purchase_rate: this.purchase_rate,
                   sale_rate: this.sale_rate,
@@ -109,8 +109,8 @@
               this.msgShow = true
               setTimeout(() => this.msgShow = false, 4000)
               if (!this.save) {
-                this.name = ''
-                this.unit = ''
+                this.hs_code = ''
+                this.uo_m = ''
                 this.description = ''
                 this.purchase_rate = ''
                 this.sale_rate = ''
@@ -120,7 +120,7 @@
           })
           .finally(()=>{
               this.formLoading = false;
-              this.submitText = 'Insert Item';
+              this.submitText = 'Save Item';
           });
       },
       hideMsg(){

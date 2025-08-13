@@ -34,21 +34,29 @@
           <label class="form-check-label" for="save_fields">Retain the fields data after save</label>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <label for="name" class="form-label">Name</label>
         <input type="text" x-model="name" class="form-control form-control-sm" id="name">
       </div>
-      <div class="col-md-4">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" x-model="email" class="form-control form-control-sm" id="email">
-      </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <label for="phone" class="form-label">Phone</label>
         <input type="text" x-model="phone" class="form-control form-control-sm" id="phone">
+      </div>
+      <div class="col-md-6">
+        <label for="ntn_cnic" class="form-label">NTN / CNIC</label>
+        <input type="text" x-model="ntn_cnic" class="form-control form-control-sm" id="ntn_cnic">
+      </div>
+      <div class="col-md-6">
+        <label for="province" class="form-label">Province</label>
+        <input type="text" x-model="province" class="form-control form-control-sm" id="province">
       </div>
       <div class="col-12">
         <label for="address" class="form-label">Address</label>
         <input type="textarea" x-model="address" class="form-control form-control-sm" id="address">
+      </div>
+      <div class="col-12">
+        <label for="registration_type" class="form-label">Registration Type</label>
+        <input type="text" x-model="registration_type" class="form-control form-control-sm" id="registration_type">
       </div>
       <div class="col-12">
         <button type="submit" class="btn btn-sm btn-primary" :disabled="formLoading" x-text="submitText"></button>
@@ -61,12 +69,14 @@
   return {
       messages: '',
       errors: '',
+      ntn_cnic: '',
       name: '',
-      email: '',
       phone: '',
+      province: '',
       address: '',
+      registration_type: '',
       formLoading: false,
-      submitText: 'Insert Customer',
+      submitText: 'Save Customer',
       save: false,
       msgShow: false,
 
@@ -79,9 +89,11 @@
               method: "post",
               body: JSON.stringify({
                   name: this.name,
-                  email: this.email,
+                  ntn_cnic: this.ntn_cnic,
                   phone: this.phone,
                   address: this.address,
+                  province: this.province,
+                  registration_type: this.registration_type,
               }),
               headers: {
                   'X-CSRFToken': '{{ csrf_token }}',
@@ -98,15 +110,17 @@
               setTimeout(() => this.msgShow = false, 4000)
               if (!this.save) {
                 this.name = ''
-                this.email = ''
+                this.ntn_cnic = ''
                 this.phone = ''
                 this.address = ''
+                this.province = ''
+                this.registration_type = ''
               }
             }
           })
           .finally(()=>{
               this.formLoading = false;
-              this.submitText = 'Insert Customer';
+              this.submitText = 'Save Customer';
           });
       },
       hideMsg(){

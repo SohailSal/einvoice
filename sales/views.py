@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
 import json
-from django.db import transaction as trans
+from django.db import transaction
 from .models import Item, Customer, Invoice, InvoiceItem
 from django.core.exceptions import ValidationError
 from django.db import DatabaseError 
@@ -23,18 +23,24 @@ def customer_add(request):
 def customer_post(request):
 	data = json.loads(request.body)
 	name = data['name']
-	email = data['email']
-	phone = data['phone']
-	address = data['address']
+	ntn_cnic = data['ntn_cnic'] if data['ntn_cnic'] else ""
+	phone = data['phone'] if data['phone'] else ""
+	address = data['address'] if data['address'] else ""
+	province = data['province'] if data['province'] else ""
+	registration_type = data['registration_type'] if data['registration_type'] else ""
 
 	try:
-		with trans.atomic():
-			customer = Customer(name=name, email=email, phone=phone, address=address, account=account)
+		with transaction.atomic():
+			customer = Customer(name=name, ntn_cnic=ntn_cnic, phone=phone, address=address, province=province, registration_type=registration_type)
 			customer.full_clean()
 			customer.save()
 	except (ValidationError, DatabaseError) as e:
-		ic(e)
-		return JsonResponse({'errors':e.message_dict}, safe=False)
+		if hasattr(e, 'message_dict'):
+			errors = e.message_dict
+		else:
+			errors = {'non_field_errors': e.messages} # Fallback for non-field errors
+		
+		return JsonResponse({'errors': errors}, safe=False)
 
 	return JsonResponse({'messages':{'success':'The customer saved!'}}, safe=False)
 
@@ -44,10 +50,12 @@ def customer_edit(request,id):
 
 def customer_edit_post(request):
 	customer = get_object_or_404(Customer, pk=request.POST['id'])
-	customer.name = request.POST['name']
-	customer.email = request.POST['email']
-	customer.phone = request.POST['phone']
-	customer.address = request.POST['address']
+	customer.name = request.POST['name'] if request.POST['name'] else ""
+	customer.ntn_cnic = request.POST['ntn_cnic'] if request.POST['ntn_cnic'] else ""
+	customer.phone = request.POST['phone'] if request.POST['phone'] else ""
+	customer.address = request.POST['address'] if request.POST['address'] else ""
+	customer.province = request.POST['province'] if request.POST['province'] else ""
+	customer.registration_type = request.POST['registration_type'] if request.POST['registration_type'] else ""
 	customer.save()
 	messages.success(request, 'The customer has been updated successfully.')
 	return HttpResponseRedirect(reverse('sales:customers'))
@@ -69,21 +77,27 @@ def item_add(request):
 
 def item_post(request):
 	data = json.loads(request.body)
-	name = data['name']
-	unit = data['unit']
+	hs_code = data['hs_code'] if data['hs_code'] else ""
+	uo_m = data['uo_m'] if data['uo_m'] else ""
 	description = data['description']
-	purchase_rate = data['purchase_rate']
-	sale_rate = data['sale_rate']
-	quantity = data['quantity']
+	purchase_rate = data['purchase_rate'] if data['purchase_rate'] else 0
+	sale_rate = data['sale_rate'] if data['sale_rate'] else 0
+	quantity = data['quantity'] if data['quantity'] else 0
 
 	try:
-		with trans.atomic():
-			item = Item(name=name, unit=unit, description=description, purchase_rate=purchase_rate, sale_rate=sale_rate, quantity=quantity)
+		with transaction.atomic():
+			item = Item(hs_code=hs_code, uo_m=uo_m, description=description, purchase_rate=purchase_rate, sale_rate=sale_rate, quantity=quantity)
 			item.full_clean()
 			item.save()
 	except (ValidationError, DatabaseError) as e:
 		ic(e)
-		return JsonResponse({'errors':e.message_dict}, safe=False)
+		if hasattr(e, 'message_dict'):
+			errors = e.message_dict
+		else:
+			errors = {'non_field_errors': e.messages} # Fallback for non-field errors
+		
+		return JsonResponse({'errors': errors}, safe=False)
+		# return JsonResponse({'errors':e.message_dict}, safe=False)
 
 	return JsonResponse({'messages':{'success':'The item saved!'}}, safe=False)
 
@@ -93,12 +107,12 @@ def item_edit(request,id):
 
 def item_edit_post(request):
 	item = get_object_or_404(Item, pk=request.POST['id'])
-	item.name = request.POST['name']
-	item.unit = request.POST['unit']
+	item.hs_code = request.POST['hs_code'] if request.POST['hs_code'] else ""
+	item.uo_m = request.POST['uo_m'] if request.POST['uo_m'] else ""
 	item.description = request.POST['description']
-	item.purchase_rate = request.POST['purchase_rate']
-	item.sale_rate = request.POST['sale_rate']
-	item.quantity = request.POST['quantity']
+	item.purchase_rate = request.POST['purchase_rate'] if request.POST['purchase_rate'] else 0
+	item.sale_rate = request.POST['sale_rate'] if request.POST['sale_rate'] else 0
+	item.quantity = request.POST['quantity'] if request.POST['quantity'] else 0
 	item.save()
 	messages.success(request, 'The item has been updated successfully.')
 	return HttpResponseRedirect(reverse('sales:items'))
@@ -131,10 +145,10 @@ def invoice_post(request):
 	items = []
 
 	try:
-		with trans.atomic():
-			invoice = Invoice(transaction=transaction, invoice_number=invoice_number, customer=customer, invoice_date=invoice_date, description=description)
+		with transaction.atomic():
+			invoice = Invoice(invoice_number=invoice_number, customer=customer, invoice_date=invoice_date, description=description)
 			invoice.full_clean()
-			invoice.save()
+			invoice.save(commit=False)
 			for entry in data['entries']:
 				item = get_object_or_404(Item, pk=entry['item']) if entry['item'] else None
 				quantity = float(entry['quantity']) if entry['quantity'] else None
@@ -155,7 +169,12 @@ def invoice_post(request):
 
 	except (ValidationError, DatabaseError) as e:
 		ic(e)
-		return JsonResponse({'errors':e.message_dict}, safe=False)
+		if hasattr(e, 'message_dict'):
+			errors = e.message_dict
+		else:
+			errors = {'non_field_errors': e.messages} # Fallback for non-field errors
+		
+		return JsonResponse({'errors': errors}, safe=False)
 
 	return JsonResponse({'messages':{'success':'The invoice saved!'}}, safe=False)
 

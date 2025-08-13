@@ -29,8 +29,8 @@
       {% for item in items %}
       <tr>
         <td>{{ item.id }}</td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.unit }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.uo_m }}</td>
         <td>
           <div class="row row-cols-sm-auto">
             <a href="{% url 'sales:item_edit' item.id %}" class="btn btn-outline-secondary btn-sm">Update</a>
