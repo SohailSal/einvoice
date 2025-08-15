@@ -39,17 +39,19 @@
         <input type="date" x-model="invoice_date" class="form-control form-control-sm" id="invoice_date" min="{{start_date}}" max="{{end_date}}">
       </div>
       <div class="col-md-4">
+        <label for="invoice_type" class="form-label">Invoice Type</label>
+        <select x-model="invoice_type" id="invoice_type" class="form-select form-select-sm">
+          <option value="0" selected>Sale Invoice</option>
+          <option value="1">Debit Advice</option>
+        </select>
+      </div>
+      <div class="col-md-4">
         <label for="customer" class="form-label">Customer</label>
         <select x-model="customer" id="customer">
-          <option value="0" selected>Cash sales:</option>
           <template x-for="option in {{customers}}" :key="option.id">
               <option :value="option.id" x-text="option.name"></option>
           </template>
         </select>
-      </div>
-      <div class="col-12">
-        <label for="description" class="form-label">description</label>
-        <input type="textarea" x-model="description" class="form-control form-control-sm" id="description">
       </div>
 
 
@@ -57,8 +59,8 @@
         <table class="table">
             <thead>
               <tr>
-                <th scope="col">Item</th>
-                <th scope="col">Quantity</th>
+                <th scope="col">Description</th>
+                <th scope="col">HS Code</th>
                 <th scope="col">Rate</th>
                 <th scope="col">Amount</th>
               </tr>
@@ -77,6 +79,7 @@
                     </template>
                   </select>
                 </td>
+                <td><input x-model="entry.hs_code" type="text" class="form-control form-control-sm" readonly></td>
                 <td><input x-model="entry.quantity" type="number" class="form-control form-control-sm" @change="updateFields(index)"></td>
                 <td><input x-model="entry.rate" type="number" class="form-control form-control-sm" readonly></td>
                 <td><input x-model="entry.amount" type="number" class="form-control form-control-sm" readonly></td>
@@ -106,6 +109,7 @@
   return {
       messages: '',
       errors: '',
+      invoice_type: '',
       invoice_date: '{{start_date}}',
       customer: '',
       description: '',
@@ -115,6 +119,8 @@
       msgShow: false,
       entries: [{
             item: 0,
+            hs_code: '',
+            description: '',
             quantity: null,
             rate: null,
             amount: null,
@@ -132,6 +138,8 @@
       addEntry() {
         this.entries.push({
           item: 0,
+          hs_code: '',
+          description: '',
           quantity: null,
           rate: null,
           amount: null,
@@ -203,8 +211,9 @@
               return response.json();
           })
           .then(data => {
-            this.entries[index].rate = data.rate
-            this.updateFields(index)
+            console.log(data)
+            this.entries[index].hs_code = data.hs_code
+            // this.updateFields(index)
           })
         }
       },
