@@ -12,11 +12,9 @@
     {% endfor %}
 {% endif %}
 
-{% if not 'request.session.year_closed' %}
 <div>
   <a href="{% url 'sales:invoice_add' %}" class="btn btn-outline-primary btn-sm">Add Invoice</a>
 </div>
-{% endif %}
 <div class="">
   <table class="table table-striped table-sm" id="myTable">
     <thead>

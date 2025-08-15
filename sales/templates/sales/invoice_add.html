@@ -61,6 +61,7 @@
               <tr>
                 <th scope="col">Description</th>
                 <th scope="col">HS Code</th>
+                <th scope="col">UOM</th>
                 <th scope="col">Rate</th>
                 <th scope="col">Amount</th>
               </tr>
@@ -80,6 +81,7 @@
                   </select>
                 </td>
                 <td><input x-model="entry.hs_code" type="text" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.uo_m" type="text" class="form-control form-control-sm" readonly></td>
                 <td><input x-model="entry.quantity" type="number" class="form-control form-control-sm" @change="updateFields(index)"></td>
                 <td><input x-model="entry.rate" type="number" class="form-control form-control-sm" readonly></td>
                 <td><input x-model="entry.amount" type="number" class="form-control form-control-sm" readonly></td>
@@ -120,6 +122,7 @@
       entries: [{
             item: 0,
             hs_code: '',
+            uo_m: '',
             description: '',
             quantity: null,
             rate: null,
@@ -139,6 +142,7 @@
         this.entries.push({
           item: 0,
           hs_code: '',
+          uo_m: '',
           description: '',
           quantity: null,
           rate: null,
@@ -213,6 +217,7 @@
           .then(data => {
             console.log(data)
             this.entries[index].hs_code = data.hs_code
+            this.entries[index].uo_m = data.uo_m
             // this.updateFields(index)
           })
         }
