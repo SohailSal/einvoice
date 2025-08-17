@@ -55,7 +55,7 @@
       </div>
 
 
-      <div class="col-12">
+      <div class="">
         <table class="table">
             <thead>
               <tr>
@@ -81,10 +81,22 @@
                   </select>
                 </td>
                 <td><input x-model="entry.hs_code" type="text" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.productDescription" type="text" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.rate" type="number" class="form-control form-control-sm" readonly></td>
                 <td><input x-model="entry.uo_m" type="text" class="form-control form-control-sm" readonly></td>
                 <td><input x-model="entry.quantity" type="number" class="form-control form-control-sm" @change="updateFields(index)"></td>
-                <td><input x-model="entry.rate" type="number" class="form-control form-control-sm" readonly></td>
-                <td><input x-model="entry.amount" type="number" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.total_values" type="number" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.value_sales_excluding_st" type="number" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.fixed_notified_value_or_retail_price" type="number" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.sales_tax_applicable" type="number" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.sales_tax_withheld_at_source" type="number" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.extra_tax" type="number" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.further_tax" type="number" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.sro_schedule_no" type="text" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.fed_payable" type="number" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.discount" type="number" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.sale_type" type="text" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.sro_item_serial_no" type="text" class="form-control form-control-sm" readonly></td>
                 <td><template x-if="index>0"><button type="button" class="btn btn-sm btn-danger" @click="removeEntry(index)">&times;</button></template></td>
               </tr>
               </template>
@@ -122,11 +134,22 @@
       entries: [{
             item: 0,
             hs_code: '',
-            uo_m: '',
-            description: '',
-            quantity: null,
+            productDescription: '',
             rate: null,
-            amount: null,
+            uo_m: '',
+            quantity: null,
+            total_values: null,
+            value_sales_excluding_st: null,
+            fixed_notified_value_or_retail_price: null,
+            sales_tax_applicable: null,
+            sales_tax_withheld_at_source: null,
+            extra_tax: null,
+            further_tax: null,
+            sro_schedule_no: '',
+            fed_payable: null,
+            discount: null,
+            sale_type: '',
+            sro_item_serial_no: '',
             }],
       counter: 1,
 
@@ -141,12 +164,23 @@
       addEntry() {
         this.entries.push({
           item: 0,
-          hs_code: '',
-          uo_m: '',
-          description: '',
-          quantity: null,
-          rate: null,
-          amount: null,
+            hs_code: '',
+            productDescription: '',
+            rate: null,
+            uo_m: '',
+            quantity: null,
+            total_values: null,
+            value_sales_excluding_st: null,
+            fixed_notified_value_or_retail_price: null,
+            sales_tax_applicable: null,
+            sales_tax_withheld_at_source: null,
+            extra_tax: null,
+            further_tax: null,
+            sro_schedule_no: '',
+            fed_payable: null,
+            discount: null,
+            sale_type: '',
+            sro_item_serial_no: '',
         })
         this.counter = this.counter + 1
       },
