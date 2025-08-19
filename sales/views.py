@@ -135,36 +135,52 @@ def invoice_add(request):
 	customers = [i.select() for i in Customer.objects.all()]
 	return render(request, 'sales/invoice_add.html', context={'items':items,'customers':customers})
 
-def invoice_post(request):
+def invoice_save(request):
 	data = json.loads(request.body)
 	# invoice_number = data['invoice_number']
 	invoice_date = data['invoice_date'] if data['invoice_date'] else None
-	invoice_number = utils.generate_invoice_number(invoice_date) if data['invoice_date'] else None
+	ic(data['invoice_type'])
+	invoice_type = data['invoice_type'] if data['invoice_type'] else None
+	ic(data['invoice_type'])
+	# invoice_number = utils.generate_invoice_number(invoice_date) if data['invoice_date'] else None
+	invoice_number = "INV001"
 	customer = None if (data['customer'] == '0') else get_object_or_404(Customer, pk=data['customer'])
-	description = data['description']
 	items = []
 
 	try:
 		with transaction.atomic():
-			invoice = Invoice(invoice_number=invoice_number, customer=customer, invoice_date=invoice_date, description=description)
+			invoice = Invoice(invoice_number=invoice_number, customer=customer, invoice_date=invoice_date, invoice_type=invoice_type)
 			invoice.full_clean()
-			invoice.save(commit=False)
+			invoice.save()
 			for entry in data['entries']:
 				item = get_object_or_404(Item, pk=entry['item']) if entry['item'] else None
-				quantity = float(entry['quantity']) if entry['quantity'] else None
 				rate = float(entry['rate']) if entry['rate'] else None
-				amount = float(entry['amount']) if entry['amount'] else None
-				total = (total + amount) if amount else None
-				items.append(InvoiceItem(invoice=invoice, item=item, quantity=quantity, rate=rate, amount=amount))
+				uo_m = entry['uo_m'] if entry['uo_m'] else None
+				quantity = float(entry['quantity']) if entry['quantity'] else None
+				total_values = float(entry['total_values']) if entry['total_values'] else None
+				fixed_notified_value_or_retail_price = float(entry['fixed_notified_value_or_retail_price']) if entry['fixed_notified_value_or_retail_price'] else None
+				value_sales_excluding_st = float(entry['value_sales_excluding_st']) if entry['value_sales_excluding_st'] else None
+				sales_tax_applicable = float(entry['sales_tax_applicable']) if entry['sales_tax_applicable'] else None
+				sales_tax_withheld_at_source = float(entry['sales_tax_withheld_at_source']) if entry['sales_tax_withheld_at_source'] else None
+				extra_tax = float(entry['extra_tax']) if entry['extra_tax'] else None
+				further_tax = float(entry['further_tax']) if entry['further_tax'] else None
+				sro_schedule_no = entry['sro_schedule_no'] if entry['sro_schedule_no'] else None
+				fed_payable = float(entry['fed_payable']) if entry['fed_payable'] else None
+				discount = float(entry['discount']) if entry['discount'] else None
+				sale_type = entry['sale_type'] if entry['sale_type'] else None
+				sro_item_serial_no = entry['sro_item_serial_no'] if entry['sro_item_serial_no'] else None
+
+				# total = (total + total_values) if total_values else None
+				items.append(InvoiceItem(invoice=invoice, item=item, quantity=quantity, uo_m=uo_m, rate=rate, total_values=total_values, value_sales_excluding_st=value_sales_excluding_st, fixed_notified_value_or_retail_price=fixed_notified_value_or_retail_price, sales_tax_applicable=sales_tax_applicable, sales_tax_withheld_at_source=sales_tax_withheld_at_source, extra_tax=extra_tax, further_tax=further_tax, sro_schedule_no=sro_schedule_no, fed_payable=fed_payable, discount=discount, sale_type=sale_type, sro_item_serial_no=sro_item_serial_no))
 				# update stock item's quantity
-				item.quantity = float(item.quantity) - quantity
+				# item.quantity = float(item.quantity) - quantity
 				item.save()
 
 			for item in items:
 				item.full_clean()
 			for item in items:
 				item.save()
-			invoice.amount = total
+			# invoice.amount = total
 			invoice.save()
 
 	except (ValidationError, DatabaseError) as e:
@@ -176,6 +192,10 @@ def invoice_post(request):
 		
 		return JsonResponse({'errors': errors}, safe=False)
 
+	return JsonResponse({'messages':{'success':'The invoice saved!'}}, safe=False)
+
+
+def invoice_post(request):
 	return JsonResponse({'messages':{'success':'The invoice saved!'}}, safe=False)
 
 def getRate(request):

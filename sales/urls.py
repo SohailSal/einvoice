@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from . import utils
+# from . import utils
 
 app_name = "sales"
 urlpatterns = [
@@ -18,6 +18,7 @@ urlpatterns = [
     path('item_delete/<int:id>', views.item_delete, name='item_delete'),
     path("invoices", views.invoices, name="invoices"),
 	path('invoice_add',views.invoice_add,name='invoice_add'),
+    path('invoice_save', views.invoice_save, name='invoice_save'),
     path('invoice_post', views.invoice_post, name='invoice_post'),
     path('invoice_delete/<int:id>', views.invoice_delete, name='invoice_delete'),
     path('getRate', views.getRate, name='getRate'),

@@ -17,8 +17,9 @@ from datetime import datetime
 
 def generate_invoice_number(d):
     chunks = []
-    document = get_object_or_404(Invoice, pk=2)
-    prefix = document.prefix
+    # document = get_object_or_404(Invoice, pk=2)
+    # prefix = document.prefix
+    prefix = "INV"
     dt = datetime.strptime(d,'%Y-%m-%d')
     year = dt.strftime("%Y")
     month = dt.strftime("%m")

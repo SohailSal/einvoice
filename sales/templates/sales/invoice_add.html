@@ -41,8 +41,8 @@
       <div class="col-md-4">
         <label for="invoice_type" class="form-label">Invoice Type</label>
         <select x-model="invoice_type" id="invoice_type" class="form-select form-select-sm">
-          <option value="0" selected>Sale Invoice</option>
-          <option value="1">Debit Advice</option>
+          <option value="Sale Invoice" selected>Sale Invoice</option>
+          <option value="Debit Advice">Debit Advice</option>
         </select>
       </div>
       <div class="col-md-4">
@@ -61,9 +61,21 @@
               <tr>
                 <th scope="col">Description</th>
                 <th scope="col">HS Code</th>
-                <th scope="col">UOM</th>
                 <th scope="col">Rate</th>
-                <th scope="col">Amount</th>
+                <th scope="col">UOM</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">total_values</th>
+                <th scope="col">fixed_notified_value_or_retail_price</th>
+                <th scope="col">value_sales_excluding_st</th>
+                <th scope="col">sales_tax_applicable</th>
+                <th scope="col">sales_tax_withheld_at_source</th>
+                <th scope="col">extra_tax</th>
+                <th scope="col">further_tax</th>
+                <th scope="col">sro_schedule_no</th>
+                <th scope="col">fed_payable</th>
+                <th scope="col">discount</th>
+                <th scope="col">sale_type</th>
+                <th scope="col">sro_item_serial_no</th>
               </tr>
             </thead>
             <tbody>
@@ -81,22 +93,21 @@
                   </select>
                 </td>
                 <td><input x-model="entry.hs_code" type="text" class="form-control form-control-sm" readonly></td>
-                <td><input x-model="entry.productDescription" type="text" class="form-control form-control-sm" readonly></td>
-                <td><input x-model="entry.rate" type="number" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.rate" type="number" class="form-control form-control-sm"></td>
                 <td><input x-model="entry.uo_m" type="text" class="form-control form-control-sm" readonly></td>
                 <td><input x-model="entry.quantity" type="number" class="form-control form-control-sm" @change="updateFields(index)"></td>
-                <td><input x-model="entry.total_values" type="number" class="form-control form-control-sm" readonly></td>
-                <td><input x-model="entry.value_sales_excluding_st" type="number" class="form-control form-control-sm" readonly></td>
-                <td><input x-model="entry.fixed_notified_value_or_retail_price" type="number" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.total_values" type="number" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.value_sales_excluding_st" type="number" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.fixed_notified_value_or_retail_price" type="number" class="form-control form-control-sm"></td>
                 <td><input x-model="entry.sales_tax_applicable" type="number" class="form-control form-control-sm"></td>
                 <td><input x-model="entry.sales_tax_withheld_at_source" type="number" class="form-control form-control-sm"></td>
                 <td><input x-model="entry.extra_tax" type="number" class="form-control form-control-sm"></td>
                 <td><input x-model="entry.further_tax" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.sro_schedule_no" type="text" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.sro_schedule_no" type="text" class="form-control form-control-sm"></td>
                 <td><input x-model="entry.fed_payable" type="number" class="form-control form-control-sm"></td>
                 <td><input x-model="entry.discount" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.sale_type" type="text" class="form-control form-control-sm" readonly></td>
-                <td><input x-model="entry.sro_item_serial_no" type="text" class="form-control form-control-sm" readonly></td>
+                <td><input x-model="entry.sale_type" type="text" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.sro_item_serial_no" type="text" class="form-control form-control-sm"></td>
                 <td><template x-if="index>0"><button type="button" class="btn btn-sm btn-danger" @click="removeEntry(index)">&times;</button></template></td>
               </tr>
               </template>
@@ -123,12 +134,11 @@
   return {
       messages: '',
       errors: '',
-      invoice_type: '',
+      invoice_type: 'Sale Invoice',
       invoice_date: '{{start_date}}',
       customer: '',
-      description: '',
       formLoading: false,
-      submitText: 'Insert Invoice',
+      submitText: 'Save Invoice',
       save: false,
       msgShow: false,
       entries: [{
@@ -192,14 +202,14 @@
           event.preventDefault();
           this.formLoading = true;
           this.submitText = 'Submitting...';
-          const endpointUrl = "invoice_post"
+          const endpointUrl = "invoice_save"
           fetch(endpointUrl, {
               method: "post",
               body: JSON.stringify({
                   entries: this.entries,
                   invoice_date: this.invoice_date,
+                  invoice_type: this.invoice_type,
                   customer: this.customer,
-                  description: this.description,
               }),
               headers: {
                   'X-CSRFToken': '{{ csrf_token }}',
@@ -221,7 +231,7 @@
           })
           .finally(()=>{
               this.formLoading = false;
-              this.submitText = 'Insert Invoice';
+              this.submitText = 'Save Invoice';
           });
       },
       hideMsg(){
