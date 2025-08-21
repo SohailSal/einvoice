@@ -11,7 +11,6 @@ from django.db import DatabaseError
 from icecream import ic
 from . import utils
 import requests
-from django.core import serializers
 
 @login_required
 def customers(request):
@@ -215,8 +214,6 @@ def invoice_post(request, id):
 		"scenarioId": "SN005",
 		"items": []
 	}
-
-	# Fetch and serialize related items
 	for i in invoice.items.all():
 		payload["items"].append({
 			"hsCode": i.item.hs_code, 
@@ -239,7 +236,7 @@ def invoice_post(request, id):
 			"saleType": i.sale_type, 
 			"sroItemSerialNo": i.sro_item_serial_no 
 		})
-	# ic(payload)
+
 	api_url = "https://gw.fbr.gov.pk/di_data/v1/di/postinvoicedata_sb" 
 	api_key = "769de299-8a51-31a3-a325-6ddfa2b6b763"
 	api_data = ""
@@ -252,13 +249,16 @@ def invoice_post(request, id):
 		response = requests.post(api_url, headers=headers, data=json.dumps(payload))
 		response.raise_for_status()
 		api_data = response.json()
-		JsonResponse(api_data)
+		ic(api_data)
+		fbr_inv_no = api_data.get('invoiceNumber')
+		invoice.invoice_number_fbr = fbr_inv_no
+		invoice.save()
+		HttpResponse(fbr_inv_no)
 	except requests.exceptions.RequestException as e:
 		api_data = f"Error calling API: {e}"
 		JsonResponse(api_data)
-	return JsonResponse(api_data)
+	return HttpResponse(fbr_inv_no)
 	# return JsonResponse({'messages':{'success':'The invoice saved!'}}, safe=False)
-	# return JsonResponse(invoice_data)
 
 def getRate(request):
 	data = json.loads(request.body)
