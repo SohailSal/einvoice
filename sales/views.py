@@ -199,12 +199,9 @@ def invoice_save(request):
 
 def invoice_post(request, id):
 	invoice = get_object_or_404(Invoice, pk=id)
-	# ic(invoice.items.all())
-	# products = [i.select() for i in invoice.items.all()]
-	# products = invoice.items.all()
-	invoice_data = {
+	payload = {
 		"invoiceType": invoice.invoice_type, 
-		"invoiceDate": invoice.invoice_date, 
+		"invoiceDate": invoice.invoice_date.strftime("%Y-%m-%d"), 
 		"sellerNTNCNIC": "1000645", 
 		"sellerBusinessName": "PetroChemical & Lubricants Co (Pvt) Ltd", 
 		"sellerProvince": "Sindh", 
@@ -221,83 +218,47 @@ def invoice_post(request, id):
 
 	# Fetch and serialize related items
 	for i in invoice.items.all():
-		invoice_data["items"].append({
+		payload["items"].append({
 			"hsCode": i.item.hs_code, 
 			"productDescription": i.item.description, 
-			"rate": i.rate, 
+			"rate": f"{i.rate}", 
+			# "rate": f"{i.rate}%", 
 			"uoM": i.uo_m, 
 			"quantity": i.quantity, 
-			"totalValues": i.total_values, 
-			"valueSalesExcludingST": i.value_sales_excluding_st, 
-			"fixedNotifiedValueOrRetailPrice": i.fixed_notified_value_or_retail_price, 
-			"salesTaxApplicable": i.sales_tax_applicable, 
-			"salesTaxWithheldAtSource": i.sales_tax_withheld_at_source, 
-			"extraTax": i.extra_tax, 
-			"furtherTax": i.further_tax, 
+			"totalValues": int(round(float(i.total_values))), 
+			"valueSalesExcludingST": int(round(float(i.value_sales_excluding_st))), 
+			"fixedNotifiedValueOrRetailPrice": int(round(float(i.fixed_notified_value_or_retail_price))), 
+			"salesTaxApplicable": int(round(float(i.sales_tax_applicable))), 
+			"salesTaxWithheldAtSource": int(round(float(i.sales_tax_withheld_at_source))), 
+			"extraTax": "", 
+			# "extraTax": i.extra_tax, 
+			"furtherTax": int(round(float(i.further_tax))), 
 			"sroScheduleNo": i.sro_schedule_no, 
-			"fedPayable": i.fed_payable, 
-			"discount": i.discount, 
+			"fedPayable": int(round(float(i.fed_payable))), 
+			"discount": int(round(float(i.discount))), 
 			"saleType": i.sale_type, 
 			"sroItemSerialNo": i.sro_item_serial_no 
 		})
-	# ic(invoice_data)
+	# ic(payload)
 	api_url = "https://gw.fbr.gov.pk/di_data/v1/di/postinvoicedata_sb" 
 	api_key = "769de299-8a51-31a3-a325-6ddfa2b6b763"
 	api_data = ""
-    
-	payload = { 
-	"invoiceType": invoice.invoice_type, 
-	"invoiceDate": invoice.invoice_date, 
-	"sellerNTNCNIC": "1000645", 
-	"sellerBusinessName": "PetroChemical & Lubricants Co (Pvt) Ltd", 
-	"sellerProvince": "Sindh", 
-	"sellerAddress": "Karachi", 
-	"buyerNTNCNIC": invoice.customer.ntn_cnic, 
-	"buyerBusinessName": invoice.customer.name, 
-	"buyerProvince": invoice.customer.province, 
-	"buyerAddress": invoice.customer.address, 
-	"buyerRegistrationType": invoice.customer.registration_type, 
-	"invoiceRefNo": "",
-	"scenarioId": "SN002",
-	"items": [ 
-			{ 
-				"hsCode": "0101.2100", 
-				"productDescription": "product Description", 
-				"rate": "18%", 
-				"uoM": "Numbers, pieces, units", 
-				"quantity": 1, 
-				"totalValues": 0, 
-				"valueSalesExcludingST":1000, 
-				"fixedNotifiedValueOrRetailPrice":0, 
-				"salesTaxApplicable": 180, 
-				"salesTaxWithheldAtSource":0, 
-				"extraTax": "", 
-				"furtherTax": 120, 
-				"sroScheduleNo": "", 
-				"fedPayable": 0, 
-				"discount": 0, 
-				"saleType": "Goods at standard rate (default)", 
-				"sroItemSerialNo": "" 
-			} 
-		] 
-	}
-
 	headers = {
 		"Content-Type": "application/json",
 		"Authorization": f"Bearer {api_key}"
 	}
 
-	# try:
-	#     response = requests.post(api_url, headers=headers, data=json.dumps(payload))
-	#     response.raise_for_status()
-	#     api_data = response.json()
-	#     JsonResponse(api_data)
-	# except requests.exceptions.RequestException as e:
-	#     api_data = f"Error calling API: {e}"
-	#     JsonResponse(api_data)
-	# return JsonResponse(api_data)
+	try:
+		response = requests.post(api_url, headers=headers, data=json.dumps(payload))
+		response.raise_for_status()
+		api_data = response.json()
+		JsonResponse(api_data)
+	except requests.exceptions.RequestException as e:
+		api_data = f"Error calling API: {e}"
+		JsonResponse(api_data)
+	return JsonResponse(api_data)
 	# return JsonResponse({'messages':{'success':'The invoice saved!'}}, safe=False)
-	return JsonResponse(invoice_data)
+	# return JsonResponse(invoice_data)
 
 def getRate(request):
 	data = json.loads(request.body)
