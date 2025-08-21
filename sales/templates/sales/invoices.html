@@ -34,12 +34,14 @@
         <td>
           <div class="row row-cols-lg-auto">
             <a href="{% url 'sales:invoice' invoice.pk %}" class="btn btn-outline-secondary btn-sm">PDF</a>
-            {% if not 'request.session.year_closed' %}
+            <form action="{% url 'sales:invoice_post' invoice.pk %}" method="post" class="">
+              {% csrf_token %}
+              <input type="submit" value="Post" class="btn btn-outline-primary btn-sm"/>
+            </form>
             <form action="{% url 'sales:invoice_delete' invoice.pk %}" method="post" class="">
               {% csrf_token %}
               <input type="submit" value="Delete" class="btn btn-outline-danger btn-sm"/>
             </form>
-            {% endif %}
           </div>
         </td>
       </tr>
