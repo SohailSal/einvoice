@@ -11,6 +11,7 @@ from django.db import DatabaseError
 from icecream import ic
 from . import utils
 import requests
+import os
 
 @login_required
 def customers(request):
@@ -238,7 +239,8 @@ def invoice_post(request, id):
 		})
 
 	api_url = "https://gw.fbr.gov.pk/di_data/v1/di/postinvoicedata_sb" 
-	api_key = "769de299-8a51-31a3-a325-6ddfa2b6b763"
+	api_key = os.getenv("API_KEY_FBR")
+	ic(api_key)
 	api_data = ""
 	headers = {
 		"Content-Type": "application/json",
