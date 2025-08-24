@@ -13,7 +13,7 @@ from datetime import datetime
 
 import requests
 import json
-
+import os
 
 # logins
 
@@ -90,7 +90,7 @@ def reports(request):
 
 def scenario(request):
     api_url = "https://gw.fbr.gov.pk/di_data/v1/di/postinvoicedata_sb" 
-    api_key = "769de299-8a51-31a3-a325-6ddfa2b6b763"
+    api_key = os.getenv("API_KEY_FBR")
     api_data = ""
     
     payload = { 

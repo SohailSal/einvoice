@@ -75,19 +75,19 @@ def generate_invoice(id):
     c.drawString(30, h, f"Invoice Date: {invoice.invoice_date}")
     cnt = len(products)
 
-	# Create product table
-    # data = [[Paragraph("PRODUCT", heading3), Paragraph("QUANTITY", heading3), Paragraph("PRICE (Rs.)", heading3), Paragraph("AMOUNT (Rs.)", heading3)]]
+    data = [[Paragraph("PRODUCT", heading3), Paragraph("QUANTITY", heading3), Paragraph("PRICE (Rs.)", heading3), Paragraph("AMOUNT (Rs.)", heading3)]]
+    data.extend([[Paragraph(p.uo_m, data_style), Paragraph(str(p.quantity), data_style), Paragraph(p.rate, amount_style)] for p in products])
     # data.extend([[Paragraph(p["uo_m"], data_style), Paragraph(str(p["quantity"]), data_style), Paragraph(f"{p['rate']:.2f}", amount_style), Paragraph(f"{p['quantity'] * p['rate']:0,.2f}", amount_style)] for p in products])
 
     # total_amount = sum([p["quantity"] * p["rate"] for p in products])
     # data.extend([[Paragraph("Total Amount", heading4), Paragraph(""), Paragraph(""), Paragraph(f"Rs.{total_amount:0,.2f}", amount_style)]])
 
-    # table = Table(data, colWidths=[100, 100, 100, 100], style=[('LINEABOVE',(0,1),(3,1),1,colors.black), ('LINEBEFORE',(3,1),(3,cnt),1,colors.black), ('LINEAFTER',(3,1),(3,cnt),1,colors.black), ('LINEABOVE',(-1,-1),(-1,-1),1,colors.black), ('LINEBELOW',(-1,-1),(-1,-1),1,colors.black,0,None,None,2,2)])
+    table = Table(data, colWidths=[100, 100, 100, 100], style=[('LINEABOVE',(0,1),(3,1),1,colors.black), ('LINEBEFORE',(3,1),(3,cnt),1,colors.black), ('LINEAFTER',(3,1),(3,cnt),1,colors.black), ('LINEABOVE',(-1,-1),(-1,-1),1,colors.black), ('LINEBELOW',(-1,-1),(-1,-1),1,colors.black,0,None,None,2,2)])
 
-    # th = cnt*20 + 70
-    # h = h - th
-    # table.wrapOn(c, 50, h)
-    # table.drawOn(c, 50, h)
+    th = cnt*20 + 70
+    h = h - th
+    table.wrapOn(c, 50, h)
+    table.drawOn(c, 50, h)
 
     # h = h - 30
     # c.drawString(50, h, "Rupees")
