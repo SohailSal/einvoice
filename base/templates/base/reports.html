@@ -13,6 +13,28 @@
 {% endif %}
 
 <br>
+<h5>Invoices Report</h5>
+<div>
+  <form action="/reports_invoices" method="post" class="row gx-3 gy-2 align-items-end">
+    {% csrf_token %}
+
+    <div class="col-sm-3">
+      <label for="start_date" class="form-label">Start Date</label>
+      <input type="date" class="form-control form-control-sm" id="start_date" name="start_date"  min="{{start_date}}" max="{{end_date}}" value="{{start_date}}" required>
+    </div>
+    <div class="col-sm-3">
+      <label for="end_date" class="form-label">End Date</label>
+      <input type="date" class="form-control form-control-sm" id="end_date" name="end_date"  min="{{start_date}}" max="{{end_date}}" value="{{end_date}}" required>
+    </div>
+
+    <div class="col-auto">
+      <button type="submit" class="btn btn-sm btn-primary ">Fetch Report</button>
+    </div>
+
+  </form>
+</div>
+
+<br>
 <h5>Scenario</h5>
 <div>
   <form action="/scenario" method="post" class="row gx-3 gy-2 align-items-end">

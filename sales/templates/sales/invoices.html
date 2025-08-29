@@ -30,7 +30,7 @@
       <tr>
         <td>{{ invoice.id }}</td>
         <td>{{ invoice.invoice_number }}</td>
-        <td>{{ invoice.invoice_date }}</td>
+        <td>{{ invoice.invoice_number_fbr }}</td>
         <td>
           <div class="row row-cols-lg-auto">
             <a href="{% url 'sales:invoice' invoice.pk %}" class="btn btn-outline-secondary btn-sm">PDF</a>

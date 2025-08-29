@@ -14,6 +14,7 @@ from datetime import datetime
 import requests
 import json
 import os
+import utils
 
 # logins
 
@@ -144,3 +145,15 @@ def scenario(request):
         api_data = f"Error calling API: {e}"
         JsonResponse(api_data)
     return JsonResponse(api_data)
+
+def reports_invoices(request):
+    start = request.POST['start_date']
+    end = request.POST['end_date']
+    account = get_object_or_404(Account, pk=request.POST['acc'])
+    entries = [i.ledger() for i in Entry.objects.filter(account=account, transaction__date__range=(start,end))]
+    if entries:
+        response = utils.generate_report(entries)
+        return response
+    else:
+        messages.warning(request, "No entries were present!")
+        return redirect('/reports')
