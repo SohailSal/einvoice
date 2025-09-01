@@ -2,23 +2,24 @@ import xlsxwriter
 import io
 from icecream import ic
 from django.db.models import Sum, Q, F
-from django.db import transaction as trans
+# from django.db import transaction as trans
 from django.db import DatabaseError
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
+from sales.models import Invoice, Customer
 
-def generate_report(ledger_data):
+def generate_report(invoice_data):
     # Create a new workbook and add a worksheet
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)
-    worksheet = workbook.add_worksheet('ledger')
+    worksheet = workbook.add_worksheet('invoices')
     header1 = "&CHere is some centered header."
     footer1 = "&LHere is some left aligned footer."
 
     worksheet.set_header(header1)
     worksheet.set_footer(footer1)
     # Define the column headers
-    headers = ['Date', 'Ref', 'Description', 'Debit', 'Credit', 'Running Balance']
+    headers = ['Date', 'Ref', 'Type','Customer', 'FBR #', 'Amount']
 
     # Write the column headers to the worksheet
     for col, header in enumerate(headers):
@@ -32,40 +33,45 @@ def generate_report(ledger_data):
     format2 = workbook.add_format({'num_format': '#,##0.00'})
     worksheet.set_column(0, 0, 18)
 
-    year_setting = Setting.objects.filter(name__iexact='year').first().value
-    year = get_object_or_404(Year, pk=year_setting)
-    prev_yr = Year.objects.filter(id = year.previous).first()
+    # year_setting = Setting.objects.filter(name__iexact='year').first().value
+    # year = get_object_or_404(Year, pk=year_setting)
+    # prev_yr = Year.objects.filter(id = year.previous).first()
     # start_dt = year.start_date.strftime("%Y-%m-%d")
 
 
     worksheet.write(1,2, 'Opening Balance')
     worksheet.write(1,5, ob, format2)
     balance = float(ob)
-    for row, data in enumerate(ledger_data, start=2):
-        balance += float(data['debit']) - float(data['credit'])
-
-        worksheet.write(row, 0, data['date'], format1)
-        worksheet.write(row, 1, data['ref'])
-        worksheet.write(row, 2, data['description'])
-        worksheet.write(row, 3, data['debit'], format2)
-        worksheet.write(row, 4, data['credit'], format2)
-        worksheet.write(row, 5, balance, format2)
+    for row, data in enumerate(invoice_data, start=2):
+        # balance += float(data['debit']) - float(data['credit'])
+        # ic(data)
+        worksheet.write(row, 0, data["invoice_date"], format1)
+        worksheet.write(row, 1, data["invoice_number"])
+        worksheet.write(row, 2, data["invoice_type"])
+        customer = get_object_or_404(Customer, pk=data["customer_id"])
+        worksheet.write(row, 3, customer.name)
+        worksheet.write(row, 4, data["invoice_number_fbr"])
+        invoice = get_object_or_404(Invoice, pk=data["id"])
+        total = 0
+        for item in invoice.items.all():
+            total = total + item.total_values
+        worksheet.write(row, 5, total, format2)
 
         row_count = row_count + 1
 
     # Write the totals
-    total_debit = sum(float(data['debit']) for data in ledger_data)
-    total_credit = sum(float(data['credit']) for data in ledger_data)
+    # total_debit = sum(float(data['debit']) for data in invoice_data)
+    # total_credit = sum(float(data['credit']) for data in invoice_data)
 
-    worksheet.write(row_count, 1, 'Totals')
-    worksheet.write(row_count, 3, total_debit, format2)
-    worksheet.write(row_count, 4, total_credit, format2)
+    # worksheet.write(row_count, 1, 'Totals')
+    # worksheet.write(row_count, 3, total_debit, format2)
+    # worksheet.write(row_count, 4, total_credit, format2)
 
     # Save the workbook
     worksheet.autofit()
     workbook.close()
     output.seek(0)
-    filename = "ledger.xlsx"
+    filename = "invoices.xlsx"
     response = HttpResponse(
         output,
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

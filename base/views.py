@@ -15,6 +15,7 @@ import requests
 import json
 import os
 from . import utils
+from sales.models import Invoice
 
 # logins
 
@@ -149,11 +150,12 @@ def scenario(request):
 def reports_invoices(request):
     start = request.POST['start_date']
     end = request.POST['end_date']
-    return JsonResponse({"start": start, "end": end})
-    # entries = [i.ledger() for i in Entry.objects.filter(account=account, transaction__date__range=(start,end))]
-    # if entries:
-    #     response = utils.generate_report(entries)
-    #     return response
-    # else:
-    #     messages.warning(request, "No entries were present!")
-    #     return redirect('/reports')
+    invoices = Invoice.objects.filter(invoice_date__range=(start,end)).values()
+    # converted = list(invoices)
+    # return JsonResponse(converted, safe=False)
+    if invoices:
+        response = utils.generate_report(invoices)
+        return response
+    else:
+        messages.warning(request, "No invoices were present!")
+        return redirect('/reports')
