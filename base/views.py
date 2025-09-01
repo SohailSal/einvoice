@@ -14,7 +14,7 @@ from datetime import datetime
 import requests
 import json
 import os
-import utils
+from . import utils
 
 # logins
 
@@ -149,11 +149,11 @@ def scenario(request):
 def reports_invoices(request):
     start = request.POST['start_date']
     end = request.POST['end_date']
-    account = get_object_or_404(Account, pk=request.POST['acc'])
-    entries = [i.ledger() for i in Entry.objects.filter(account=account, transaction__date__range=(start,end))]
-    if entries:
-        response = utils.generate_report(entries)
-        return response
-    else:
-        messages.warning(request, "No entries were present!")
-        return redirect('/reports')
+    return JsonResponse({"start": start, "end": end})
+    # entries = [i.ledger() for i in Entry.objects.filter(account=account, transaction__date__range=(start,end))]
+    # if entries:
+    #     response = utils.generate_report(entries)
+    #     return response
+    # else:
+    #     messages.warning(request, "No entries were present!")
+    #     return redirect('/reports')
