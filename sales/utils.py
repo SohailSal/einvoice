@@ -76,10 +76,10 @@ def generate_invoice(id):
     cnt = len(products)
 
     data = [[Paragraph("PRODUCT", heading3), Paragraph("QUANTITY", heading3), Paragraph("ST Rate", heading3), Paragraph("AMOUNT (Rs.)", heading3)]]
-    data.extend([[Paragraph(p.item.description, data_style), Paragraph(str(p.quantity), data_style), Paragraph(p.rate, amount_style), Paragraph(str(p.total_values), amount_style)] for p in products])
+    data.extend([[Paragraph(p.item.description, data_style), Paragraph(str(p.quantity), data_style), Paragraph(p.rate, amount_style), Paragraph(str(p.value_sales_excluding_st), amount_style)] for p in products])
     # data.extend([[Paragraph(p["uo_m"], data_style), Paragraph(str(p["quantity"]), data_style), Paragraph(f"{p['rate']:.2f}", amount_style), Paragraph(f"{p['quantity'] * p['rate']:0,.2f}", amount_style)] for p in products])
 
-    total_amount = sum([p.total_values for p in products])
+    total_amount = sum([p.value_sales_excluding_st for p in products])
     data.extend([[Paragraph("Total Amount", heading4), Paragraph(""), Paragraph(""), Paragraph(f"Rs.{total_amount:0,.2f}", amount_style)]])
 
     table = Table(data, colWidths=[100, 100, 100, 100], style=[('LINEABOVE',(0,1),(3,1),1,colors.black), ('LINEBEFORE',(3,1),(3,cnt),1,colors.black), ('LINEAFTER',(3,1),(3,cnt),1,colors.black), ('LINEABOVE',(-1,-1),(-1,-1),1,colors.black), ('LINEBELOW',(-1,-1),(-1,-1),1,colors.black,0,None,None,2,2)])

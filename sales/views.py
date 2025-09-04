@@ -156,7 +156,7 @@ def invoice_save(request):
 			invoice.save()
 			for entry in data['entries']:
 				item = get_object_or_404(Item, pk=entry['item']) if entry['item'] else None
-				rate = float(entry['rate']) if entry['rate'] else None
+				rate = entry['rate'] if entry['rate'] else None
 				uo_m = entry['uo_m'] if entry['uo_m'] else None
 				quantity = float(entry['quantity']) if entry['quantity'] else None
 				total_values = float(entry['total_values']) if entry['total_values'] else None
@@ -212,30 +212,30 @@ def invoice_post(request, id):
 		"buyerAddress": invoice.customer.address, 
 		"buyerRegistrationType": invoice.customer.registration_type, 
 		"invoiceRefNo": "",
-		"scenarioId": "SN005",
+		"scenarioId": "SN001",
 		"items": []
 	}
 	for i in invoice.items.all():
 		payload["items"].append({
 			"hsCode": i.item.hs_code, 
 			"productDescription": i.item.description, 
-			"rate": f"{i.rate}", 
+			"rate": f"{i.rate}%" if i.rate else "", 
 			# "rate": f"{i.rate}%", 
 			"uoM": i.uo_m, 
 			"quantity": i.quantity, 
-			"totalValues": int(round(float(i.total_values))), 
-			"valueSalesExcludingST": int(round(float(i.value_sales_excluding_st))), 
-			"fixedNotifiedValueOrRetailPrice": int(round(float(i.fixed_notified_value_or_retail_price))), 
-			"salesTaxApplicable": int(round(float(i.sales_tax_applicable))), 
-			"salesTaxWithheldAtSource": int(round(float(i.sales_tax_withheld_at_source))), 
-			"extraTax": "", 
+			"totalValues": int(round(float(i.total_values))) if i.total_values else 0, 
+			"valueSalesExcludingST": int(round(float(i.value_sales_excluding_st))) if i.value_sales_excluding_st else 0, 
+			"fixedNotifiedValueOrRetailPrice": int(round(float(i.fixed_notified_value_or_retail_price))) if i.fixed_notified_value_or_retail_price else 0, 
+			"salesTaxApplicable": int(round(float(i.sales_tax_applicable))) if i.sales_tax_applicable else 0, 
+			"salesTaxWithheldAtSource": int(round(float(i.sales_tax_withheld_at_source))) if i.sales_tax_withheld_at_source else 0, 
+			"extraTax": f"{i.extra_tax}" if i.extra_tax else "", 
 			# "extraTax": i.extra_tax, 
-			"furtherTax": int(round(float(i.further_tax))), 
-			"sroScheduleNo": i.sro_schedule_no, 
-			"fedPayable": int(round(float(i.fed_payable))), 
-			"discount": int(round(float(i.discount))), 
+			"furtherTax": int(round(float(i.further_tax))) if i.further_tax else 0, 
+			"sroScheduleNo": i.sro_schedule_no if i.sro_schedule_no else "", 
+			"fedPayable": int(round(float(i.fed_payable))) if i.fed_payable else 0, 
+			"discount": int(round(float(i.discount))) if i.discount else 0, 
 			"saleType": i.sale_type, 
-			"sroItemSerialNo": i.sro_item_serial_no 
+			"sroItemSerialNo": i.sro_item_serial_no if i.sro_item_serial_no else "" 
 		})
 
 	api_url = "https://gw.fbr.gov.pk/di_data/v1/di/postinvoicedata_sb" 
@@ -246,7 +246,7 @@ def invoice_post(request, id):
 		"Content-Type": "application/json",
 		"Authorization": f"Bearer {api_key}"
 	}
-
+	# return JsonResponse(payload)
 	try:
 		response = requests.post(api_url, headers=headers, data=json.dumps(payload))
 		response.raise_for_status()
@@ -260,6 +260,8 @@ def invoice_post(request, id):
 		api_data = f"Error calling API: {e}"
 		JsonResponse(api_data)
 	return HttpResponse(fbr_inv_no)
+
+
 	# return JsonResponse({'messages':{'success':'The invoice saved!'}}, safe=False)
 
 def getRate(request):

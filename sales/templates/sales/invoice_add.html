@@ -55,27 +55,27 @@
       </div>
 
 
-      <div class="">
-        <table class="table">
+      <div class="overflow-scroll">
+        <table class="table-responsive">
             <thead>
               <tr>
-                <th scope="col">Description</th>
-                <th scope="col">HS Code</th>
-                <th scope="col">Rate</th>
-                <th scope="col">UOM</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">total_values</th>
-                <th scope="col">fixed_notified_value_or_retail_price</th>
-                <th scope="col">value_sales_excluding_st</th>
-                <th scope="col">sales_tax_applicable</th>
-                <th scope="col">sales_tax_withheld_at_source</th>
-                <th scope="col">extra_tax</th>
-                <th scope="col">further_tax</th>
-                <th scope="col">sro_schedule_no</th>
-                <th scope="col">fed_payable</th>
-                <th scope="col">discount</th>
-                <th scope="col">sale_type</th>
-                <th scope="col">sro_item_serial_no</th>
+                <th scope="col" class="border border-info text-center">Description</th>
+                <th scope="col" class="border border-info text-center">HS Code</th>
+                <th scope="col" class="border border-info text-center">Rate</th>
+                <th scope="col" class="border border-info text-center">UOM</th>
+                <th scope="col" class="border border-info text-center">Quantity</th>
+                <th scope="col" class="border border-info text-center">Total Values</th>
+                <th scope="col" class="border border-info text-center">Value Sales excluding ST</th>
+                <th scope="col" class="border border-info text-center">Fixed Notified Value or Retail Price</th>
+                <th scope="col" class="border border-info text-center">Sales Tax applicable</th>
+                <th scope="col" class="border border-info text-center">Sales Tax withheld at source</th>
+                <th scope="col" class="border border-info text-center">Extra Tax</th>
+                <th scope="col" class="border border-info text-center">Further Tax</th>
+                <th scope="col" class="border border-info text-center">SRO Schedule No.</th>
+                <th scope="col" class="border border-info text-center">FED Payable</th>
+                <th scope="col" class="border border-info text-center">Discount</th>
+                <th scope="col" class="border border-info text-center">Sale Type</th>
+                <th scope="col" class="border border-info text-center">SRO item serial no.</th>
               </tr>
             </thead>
             <tbody>
@@ -84,42 +84,42 @@
               $watch('counter', () => { slim() })">
 
               <tr>
-                <td scope="row">    
-                  <select x-model="entry.item" @change="getRate(entry.item, index)" :id="$id('stock')">
+                <td scope="row">
+                  <select x-model="entry.item" @change="getRate(entry.item, index)" :id="$id('stock')" style="width: 200px;">
                     <option value="0" selected>Select item:</option>
                     <template x-for="option in {{items}}" :key="option.id">
                         <option :value="option.id" x-text="option.name"></option>
                     </template>
                   </select>
                 </td>
-                <td><input x-model="entry.hs_code" type="text" class="form-control form-control-sm" readonly></td>
-                <td><input x-model="entry.rate" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.uo_m" type="text" class="form-control form-control-sm" readonly></td>
-                <td><input x-model="entry.quantity" type="number" class="form-control form-control-sm" @change="updateFields(index)"></td>
-                <td><input x-model="entry.total_values" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.value_sales_excluding_st" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.fixed_notified_value_or_retail_price" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.sales_tax_applicable" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.sales_tax_withheld_at_source" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.extra_tax" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.further_tax" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.sro_schedule_no" type="text" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.fed_payable" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.discount" type="number" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.sale_type" type="text" class="form-control form-control-sm"></td>
-                <td><input x-model="entry.sro_item_serial_no" type="text" class="form-control form-control-sm"></td>
+                <td><input x-model="entry.hs_code" type="text" class="form-control form-control-sm" readonly style="width: 120px;"></td>
+                <td><input x-model="entry.rate" type="number" class="form-control form-control-sm" style="width: 60px;"></td>
+                <td><input x-model="entry.uo_m" type="text" class="form-control form-control-sm" readonly style="width: 60px;"></td>
+                <td><input x-model="entry.quantity" type="number" class="form-control form-control-sm" @change="updateFields(index)" style="width: 80px;"></td>
+                <td><input x-model="entry.total_values" type="number" class="form-control form-control-sm" style="width: 120px;"></td>
+                <td><input x-model="entry.value_sales_excluding_st" type="number" class="form-control form-control-sm" style="width: 120px;"></td>
+                <td><input x-model="entry.fixed_notified_value_or_retail_price" type="number" class="form-control form-control-sm" style="width: 100px;"></td>
+                <td><input x-model="entry.sales_tax_applicable" type="number" class="form-control form-control-sm" style="width: 120px;"></td>
+                <td><input x-model="entry.sales_tax_withheld_at_source" type="number" class="form-control form-control-sm" style="width: 120px;"></td>
+                <td><input x-model="entry.extra_tax" type="number" class="form-control form-control-sm" style="width: 100px;"></td>
+                <td><input x-model="entry.further_tax" type="number" class="form-control form-control-sm" style="width: 100px;"></td>
+                <td><input x-model="entry.sro_schedule_no" type="text" class="form-control form-control-sm" style="width: 120px;"></td>
+                <td><input x-model="entry.fed_payable" type="number" class="form-control form-control-sm" style="width: 100px;"></td>
+                <td><input x-model="entry.discount" type="number" class="form-control form-control-sm" style="width: 100px;"></td>
+                <td><input x-model="entry.sale_type" type="text" class="form-control form-control-sm" style="width: 120px;"></td>
+                <td><input x-model="entry.sro_item_serial_no" type="text" class="form-control form-control-sm" style="width: 80px;"></td>
                 <td><template x-if="index>0"><button type="button" class="btn btn-sm btn-danger" @click="removeEntry(index)">&times;</button></template></td>
               </tr>
               </template>
             </tbody>
             <tfoot>
                 <tr>
-                  <td colspan="4"><button type="submit" class="btn btn-sm btn-primary" :disabled="formLoading" x-text="submitText"></button><button type="button" class="btn btn-sm btn-secondary mx-4" @click="addEntry()">Add Entry Row</button></td>
+                  <td colspan="4"><button type="button" class="btn btn-sm btn-secondary my-2" @click="addEntry()">Add Item Row</button></td>
                 </tr>
             </tfoot>
         </table>
      </div>
-
+            <button type="submit" class="btn btn-sm btn-primary w-25 mx-2" :disabled="formLoading" x-text="submitText"></button>
     </form>
   </div>
 
@@ -173,7 +173,7 @@
 
       addEntry() {
         this.entries.push({
-          item: 0,
+            item: 0,
             hs_code: '',
             productDescription: '',
             rate: null,

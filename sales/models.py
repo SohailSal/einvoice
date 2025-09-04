@@ -20,7 +20,7 @@ class Customer(models.Model):
 class Item(models.Model):
     hs_code = models.CharField(max_length=15, null=True, blank=True)
     description = models.CharField(max_length=255)
-    uo_m = models.CharField(max_length=15, null=True, blank=True)
+    uo_m = models.CharField(max_length=30, null=True, blank=True)
     purchase_rate = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
     sale_rate = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
     quantity = models.PositiveIntegerField(null=True, blank=True)
@@ -51,7 +51,7 @@ class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, related_name='items', null=True, blank=True, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     rate = models.CharField(max_length=10, null=True, blank=True)
-    uo_m = models.CharField(max_length=15, null=True, blank=True)
+    uo_m = models.CharField(max_length=30, null=True, blank=True)
     quantity = models.PositiveIntegerField()
     total_values = models.DecimalField(max_digits=14, decimal_places=0, null=True, blank=True)
     value_sales_excluding_st = models.DecimalField(max_digits=14, decimal_places=0, null=True, blank=True)
