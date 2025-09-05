@@ -159,3 +159,7 @@ def reports_invoices(request):
     else:
         messages.warning(request, "No invoices were present!")
         return redirect('/reports')
+
+@login_required
+def fbr(request):
+    return render(request, 'base/fbr.html', context={})

@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <title>FBR API</title>
+    <link rel='stylesheet' href="{% static 'base/css/bootstrap.min.css' %}" type='text/css'>
+    <link rel='stylesheet' href="{% static 'base/css/dashboard.css' %}" type='text/css'>
+    <link rel='stylesheet' href="{% static 'base/css/slimselect.css' %}" type='text/css'>
+    <script src="{% static 'base/js/slimselect.min.js' %}"></script>
+    <script src="{% static 'base/js/jquery.min.js' %}"></script>
+    <link rel='stylesheet' href="{% static 'base/css/datatables.min.css' %}" type='text/css'>
+    <script src="{% static 'base/js/datatables.min.js' %}"></script>
+
+
+    <style type="text/css">
+      .sidebar li .submenu{ 
+        list-style: none; 
+        margin: 0; 
+        padding: 0; 
+        padding-left: 1rem; 
+        padding-right: 1rem;
+      }
+      .sidebar li ul li a{ 
+        margin: 1px; 
+        padding: 1px; 
+        padding-left: 1rem;
+      }
+      .sidebar li ul li a:hover{ 
+        color:black;
+        background-color: #f8f9fa;
+      }
+      .sidebar li ul{ 
+        background-color: lightgray;
+      }
+
+
+    </style>
+
+    </head>
+    <body>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-info">
+            <strong>{{ message|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<br>
+<h5>FBR API</h5>
+<br>
+<h5>Scenario</h5>
+<div>
+  <form action="/scenario" method="post" class="row gx-3 gy-2 align-items-end">
+    {% csrf_token %}
+
+    <div class="col-auto">
+      <button type="submit" class="btn btn-sm btn-primary ">Scenario 2</button>
+    </div>
+
+  </form>
+</div>
+    <script src="{% static 'base/js/alpine.min.js' %}"></script>
+    <script src="{% static 'base/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+</script>
+</body>
+</html>
