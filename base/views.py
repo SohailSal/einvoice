@@ -163,3 +163,17 @@ def reports_invoices(request):
 @login_required
 def fbr(request):
     return render(request, 'base/fbr.html', context={})
+
+def get_transaction_type(request):
+    try:
+        data = json.loads(request.body)
+        transaction_type = data.get('transaction_type')
+        if transaction_type:
+            ic(transaction_type)
+            return JsonResponse({'tt': "tttt", 'hello': "world"}, safe=False)
+        else:
+            return JsonResponse({'rate': 0}, safe=False)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

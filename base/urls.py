@@ -18,4 +18,5 @@ urlpatterns = [
     path('reports_invoices', views.reports_invoices, name='reports_invoices'),
     path('scenario', views.scenario, name='scenario'),
     path('fbr', views.fbr, name='fbr'),
+    path('get_transaction_type', views.get_transaction_type, name='get_transaction_type'),
 ]

@@ -35,37 +35,90 @@
       .sidebar li ul{ 
         background-color: lightgray;
       }
-
-
     </style>
-
     </head>
     <body>
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-info">
-            <strong>{{ message|escape }}</strong>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info">
+                <strong>{{ message|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div x-data="handler()" x-cloak>
+        <br>
+        <h5>FBR API</h5>
+        <div>
+          <form class="row g-3" id="transaction_type_form" @submit.prevent="submit1">
+              <div class="col-md-4">
+                <label for="invoice_date" class="form-label">Invoice Date</label>
+                <input type="text" x-model="transaction_type" class="form-control form-control-sm" id="invoice_date" min="{{start_date}}" max="{{end_date}}">
+              </div>
+              <button type="submit" class="btn btn-sm btn-primary w-25 mx-2" :disabled="form_loading" x-text="submit_text"></button>
+          </form>
         </div>
-    {% endfor %}
-{% endif %}
+        <br>
+        <h5>Scenario</h5>
+        <div>
+          <form action="/scenario" method="post" class="row gx-3 gy-2 align-items-end">
+            {% csrf_token %}
 
-<br>
-<h5>FBR API</h5>
-<br>
-<h5>Scenario</h5>
-<div>
-  <form action="/scenario" method="post" class="row gx-3 gy-2 align-items-end">
-    {% csrf_token %}
+            <div class="col-auto">
+              <button type="submit" class="btn btn-sm btn-primary ">Scenario 2</button>
+            </div>
 
-    <div class="col-auto">
-      <button type="submit" class="btn btn-sm btn-primary ">Scenario 2</button>
+          </form>
+        </div>
     </div>
-
-  </form>
-</div>
-    <script src="{% static 'base/js/alpine.min.js' %}"></script>
-    <script src="{% static 'base/js/bootstrap.bundle.min.js' %}"></script>
 <script>
+  function handler() {
+  return {
+    messages: '',
+    errors: '',
+    transaction_type : 'Hello',
+    submit_text: "Submit",
+    form_loading: false,
+    submit1(event) {
+        event.preventDefault();
+        this.form_loading = true;
+        this.submit_text = 'Submitting...';
+
+        const endpointUrl = "get_transaction_type"
+        fetch(endpointUrl, {
+            method: "post",
+            body: JSON.stringify({
+              transaction_type : this.transaction_type,
+            }),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+          this.errors = data.errors
+          this.messages = data.messages
+          if(!this.errors){
+            this.msgShow = true
+            setTimeout(() => this.msgShow = false, 1000)
+            if (!this.save) {
+              setTimeout(() => location.reload() = false, 1500)
+            }
+          }
+        })
+        .finally(()=>{
+            this.form_loading = false;
+            this.submit_text = 'Submit';
+        });
+      },
+  }
+}
 </script>
+<script src="{% static 'base/js/alpine.min.js' %}"></script>
+<script src="{% static 'base/js/bootstrap.bundle.min.js' %}"></script>
+<style>
+  [x-cloak] {display: none !important;  }
+</style>
 </body>
 </html>
