@@ -40,22 +40,92 @@
     <body>
 
     <div x-data="handler()" x-cloak>
-        <br>
-        <h5>FBR API</h5>
-        <div>
-          <form class="row g-3" id="transaction_type_form" @submit.prevent="submit1">
-              <div class="col-md-4">
-                <label for="name" class="form-label">Name:</label>
-                <input type="text" x-model="transaction_type" class="form-control form-control-sm" id="name">
+        <div class="d-flex justify-content-between">
+          <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit1">
+              <div class="col-md-8 d-flex justify-content-start align-items-center">
+                <label class="form-label">Transaction Type</label>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-4 d-flex justify-content-end align-items-center">
+                <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
+              </div>
+          </form>
+          <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit2">
+              <div class="col-md-8">
+                <label for="param1" class="form-label">Sale Type to Rate</label>
+                <input type="text" x-model="param1" class="form-control form-control-sm" id="param1">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
+              </div>
+          </form>
+          <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit3">
+              <div class="col-md-8">
+                <label for="param2" class="form-label">SRO / Schedule</label>
+                <input type="text" x-model="param2" class="form-control form-control-sm" id="param2">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
+              </div>
+          </form>
+          <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit4">
+              <div class="col-md-8">
+                <label for="param3" class="form-label">SRO Item</label>
+                <input type="text" x-model="param3" class="form-control form-control-sm" id="param3">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
+              </div>
+          </form>
+        </div>
+        <div class="d-flex justify-content-between">
+          <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit5">
+              <div class="col-md-8 d-flex justify-content-start align-items-center">
+                <label class="form-label">All HS Codes</label>
+              </div>
+              <div class="col-md-4 d-flex justify-content-end align-items-center">
+                <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
+              </div>
+          </form>
+          <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit6">
+              <div class="col-md-8">
+                <label for="param4" class="form-label">UOM of HS Code</label>
+                <input type="text" x-model="param4" class="form-control form-control-sm" id="param4">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
+              </div>
+          </form>
+          <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit7">
+              <div class="col-md-8">
+                <label for="param5" class="form-label">Registered or not?</label>
+                <input type="text" x-model="param5" class="form-control form-control-sm" id="param5">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
+              </div>
+          </form>
+          <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit8">
+              <div class="col-md-8">
+                <label for="param6" class="form-label">Active Tax Payer?</label>
+                <input type="text" x-model="param6" class="form-control form-control-sm" id="param6">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
               </div>
           </form>
         </div>
         <br>
         <div>
-          <ul style="list-style-type: none;">
+          <ul style="list-style-type: none;" x-show="openp">
+            <template x-for="(value, index) in p_data">
+              <li>
+                <span x-text="index"></span>: <span x-text="value"></span>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div>
+          <ul style="list-style-type: none;" x-show="opend">
             <template x-for="(value, index) in div_data">
               <li>
                 <span x-text="index+1"></span>:
@@ -85,22 +155,30 @@
 <script>
   function handler() {
   return {
-    messages: '',
-    errors: '',
-    transaction_type : 'Hello',
-    submit_text: "Submit",
+
+    param1 : '',
+    param2 : '',
+    param3 : '',
+    param4 : '',
+    param5 : '',
+    param6 : '',
+    param7 : '',
+    p_data: '',
     div_data: '',
+    submit_text: "Fetch",
     form_loading: false,
+    opend: false,
+    openp: false,
+
     submit1(event) {
         event.preventDefault();
         this.form_loading = true;
-        this.submit_text = 'Submitting...wait!';
+        this.submit_text = 'Wait...';
 
         const endpointUrl = "get_transaction_type"
         fetch(endpointUrl, {
             method: "post",
             body: JSON.stringify({
-              transaction_type : this.transaction_type,
             }),
             headers: {
                 'X-CSRFToken': '{{ csrf_token }}',
@@ -110,23 +188,221 @@
             return response.json();
         })
         .then(data => {
-          this.errors = data.errors
-          this.messages = data.messages
-          // if(!this.errors){
-          //   this.msgShow = true
-          //   setTimeout(() => this.msgShow = false, 1000)
-          //   if (!this.save) {
-          //     setTimeout(() => location.reload() = false, 1500)
-          //   }
-          // }
+          this.opend = false;
+          this.openp = false;
+          this.opend = true;
           this.div_data = data;
         })
         .finally(()=>{
             this.form_loading = false;
-            this.submit_text = 'Submit';
+            this.submit_text = 'Fetch';
         });
       },
-  }
+
+      submit2(event) {
+        event.preventDefault();
+        this.form_loading = true;
+        this.submit_text = 'Wait...';
+
+        const endpointUrl = "get_sale_type_to_rate"
+        fetch(endpointUrl, {
+            method: "post",
+            body: JSON.stringify({
+              param1 : this.param1,
+            }),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+          this.opend = false;
+          this.openp = false;
+          this.opend = true;
+          this.div_data = data;
+        })
+        .finally(()=>{
+            this.form_loading = false;
+            this.submit_text = 'Fetch';
+        });
+      },
+
+      submit3(event) {
+        event.preventDefault();
+        this.form_loading = true;
+        this.submit_text = 'Wait...';
+        const endpointUrl = "sro_schedule"
+        fetch(endpointUrl, {
+            method: "post",
+            body: JSON.stringify({
+              param2 : this.param2,
+            }),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+          this.opend = false;
+          this.openp = false;
+          this.opend = true;
+          this.div_data = data;
+        })
+        .finally(()=>{
+            this.form_loading = false;
+            this.submit_text = 'Fetch';
+        });
+      },
+
+      submit4(event) {
+        event.preventDefault();
+        this.form_loading = true;
+        this.submit_text = 'Wait...';
+        const endpointUrl = "sro_item"
+        fetch(endpointUrl, {
+            method: "post",
+            body: JSON.stringify({
+              param3 : this.param3,
+            }),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+          this.opend = false;
+          this.openp = false;
+          this.opend = true;
+          this.div_data = data;
+        })
+        .finally(()=>{
+            this.form_loading = false;
+            this.submit_text = 'Fetch';
+        });
+      },
+
+    submit5(event) {
+        event.preventDefault();
+        this.form_loading = true;
+        this.submit_text = 'Wait...';
+        const endpointUrl = "get_hs_codes"
+        fetch(endpointUrl, {
+            method: "post",
+            body: JSON.stringify({
+            }),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+          this.opend = false;
+          this.openp = false;
+          this.opend = true;
+          this.div_data = data;
+        })
+        .finally(()=>{
+            this.form_loading = false;
+            this.submit_text = 'Fetch';
+        });
+      },
+
+      submit6(event) {
+        event.preventDefault();
+        this.form_loading = true;
+        this.submit_text = 'Wait...';
+        const endpointUrl = "get_hs_uom"
+        fetch(endpointUrl, {
+            method: "post",
+            body: JSON.stringify({
+              param4 : this.param4,
+            }),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+          this.opend = false;
+          this.openp = false;
+          this.opend = true;
+          this.div_data = data;
+        })
+        .finally(()=>{
+            this.form_loading = false;
+            this.submit_text = 'Fetch';
+        });
+      },
+
+      submit7(event) {
+        event.preventDefault();
+        this.form_loading = true;
+        this.submit_text = 'Wait...';
+        const endpointUrl = "get_reg_type"
+        fetch(endpointUrl, {
+            method: "post",
+            body: JSON.stringify({
+              param5 : this.param5,
+            }),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+          this.opend = false;
+          this.openp = false;
+          this.openp = true;
+          this.p_data = data;
+        })
+        .finally(()=>{
+            this.form_loading = false;
+            this.submit_text = 'Fetch';
+        });
+      },
+
+      submit8(event) {
+        event.preventDefault();
+        this.form_loading = true;
+        this.submit_text = 'Wait...';
+        const endpointUrl = "get_status"
+        fetch(endpointUrl, {
+            method: "post",
+            body: JSON.stringify({
+              param6 : this.param6,
+            }),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+          this.opend = false;
+          this.openp = false;
+          this.openp = true;
+          this.p_data = data;
+        })
+        .finally(()=>{
+            this.form_loading = false;
+            this.submit_text = 'Fetch';
+        });
+      },
+
+    }
 }
 </script>
 <script src="{% static 'base/js/alpine.min.js' %}"></script>

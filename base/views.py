@@ -167,23 +167,35 @@ def fbr(request):
 def get_transaction_type(request):
     try:
         data = json.loads(request.body)
-        transaction_type = data.get('transaction_type')
-        if transaction_type:
-            # ic(transaction_type)
-            # api_url = "https://gw.fbr.gov.pk/pdi/v1/transtypecode" 
+        api_url = "https://gw.fbr.gov.pk/pdi/v1/transtypecode" 
+        api_key = os.getenv("API_KEY_FBR")
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+        response = requests.get(api_url, headers=headers, timeout=10)
+        response.raise_for_status()
+        api_data = response.json()
+        return JsonResponse(api_data, safe=False)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_sale_type_to_rate(request):
+    try:
+        data = json.loads(request.body)
+        param1 = data.get('param1')
+        if param1:
             api_key = os.getenv("API_KEY_FBR")
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {api_key}"
             }
-            # response = requests.get(api_url, headers=headers, timeout=10)
-
-
 
             base_url = "https://gw.fbr.gov.pk/pdi/v2/SaleTypeToRate"
-
             date = "24-Feb-2024"
-            trans_type_id = 18
+            trans_type_id = param1
             origination_supplier = 1
 
             params = {
@@ -192,8 +204,6 @@ def get_transaction_type(request):
                 "originationSupplier": origination_supplier
             }
             response = requests.get(base_url, params=params, timeout=10, headers=headers)
-
-
             response.raise_for_status()
             api_data = response.json()
             return JsonResponse(api_data, safe=False)
@@ -203,3 +213,170 @@ def get_transaction_type(request):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+def sro_schedule(request):
+    try:
+        data = json.loads(request.body)
+        param2 = data.get('param2')
+        if param2:
+            api_key = os.getenv("API_KEY_FBR")
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}"
+            }
+
+            base_url = "https://gw.fbr.gov.pk/pdi/v1/SroSchedule"
+            rate_id = param2
+            date = "04-Feb-2024"
+            origination_supplier_csv = 1
+
+            params = {
+                "rate_id": rate_id,
+                "date": date,
+                "origination_supplier_csv": origination_supplier_csv
+            }
+            response = requests.get(base_url, params=params, timeout=10, headers=headers)
+            response.raise_for_status()
+            api_data = response.json()
+            return JsonResponse(api_data, safe=False)
+        else:
+            return JsonResponse({'response': 0}, safe=False)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def sro_item(request):
+    try:
+        data = json.loads(request.body)
+        param3 = data.get('param3')
+        if param3:
+            api_key = os.getenv("API_KEY_FBR")
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}"
+            }
+
+            base_url = "https://gw.fbr.gov.pk/pdi/v2/SROItem"
+            date = "2025-03-25"
+            sro_id = param3
+
+            params = {
+                "date": date,
+                "sro_id": sro_id,
+            }
+            response = requests.get(base_url, params=params, timeout=10, headers=headers)
+            response.raise_for_status()
+            api_data = response.json()
+            return JsonResponse(api_data, safe=False)
+        else:
+            return JsonResponse({'response': 0}, safe=False)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_hs_codes(request):
+    try:
+        data = json.loads(request.body)
+        api_url = "https://gw.fbr.gov.pk/pdi/v1/itemdesccode" 
+        api_key = os.getenv("API_KEY_FBR")
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+        response = requests.get(api_url, headers=headers, timeout=30)
+        response.raise_for_status()
+        api_data = response.json()
+        return JsonResponse(api_data, safe=False)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_hs_uom(request):
+    try:
+        data = json.loads(request.body)
+        param4 = data.get('param4')
+        if param4:
+            api_key = os.getenv("API_KEY_FBR")
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}"
+            }
+
+            base_url = "https://gw.fbr.gov.pk/pdi/v2/HS_UOM"
+            annexure_id = 3
+            hs_code = param4
+
+            params = {
+                "hs_code": hs_code,
+                "annexure_id": annexure_id,
+            }
+            response = requests.get(base_url, params=params, timeout=10, headers=headers)
+            response.raise_for_status()
+            api_data = response.json()
+            return JsonResponse(api_data, safe=False)
+        else:
+            return JsonResponse({'response': 0}, safe=False)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_reg_type(request):
+    try:
+        data = json.loads(request.body)
+        param5 = data.get('param5')
+        if param5:
+            api_key = os.getenv("API_KEY_FBR")
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}"
+            }
+
+            base_url = "https://gw.fbr.gov.pk/dist/v1/Get_Reg_Type"
+
+            params = {
+                "Registration_No": param5,
+            }
+            response = requests.get(base_url, params=params, timeout=10, headers=headers)
+            response.raise_for_status()
+            api_data = response.json()
+            return JsonResponse(api_data, safe=False)
+        else:
+            return JsonResponse({'response': 0}, safe=False)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_status(request):
+    try:
+        data = json.loads(request.body)
+        param6 = data.get('param6')
+        if param6:
+            api_key = os.getenv("API_KEY_FBR")
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}"
+            }
+
+            base_url = "https://gw.fbr.gov.pk/dist/v1/statl"
+
+            params = {
+                "regno": param6,
+                "date": "2025-06-30",
+            }
+            response = requests.get(base_url, params=params, timeout=30, headers=headers)
+            response.raise_for_status()
+            api_data = response.json()
+            return JsonResponse(api_data, safe=False)
+        else:
+            return JsonResponse({'response': 0}, safe=False)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
