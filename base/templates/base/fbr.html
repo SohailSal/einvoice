@@ -38,26 +38,38 @@
     </style>
     </head>
     <body>
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-info">
-                <strong>{{ message|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endif %}
+
     <div x-data="handler()" x-cloak>
         <br>
         <h5>FBR API</h5>
         <div>
           <form class="row g-3" id="transaction_type_form" @submit.prevent="submit1">
               <div class="col-md-4">
-                <label for="invoice_date" class="form-label">Invoice Date</label>
-                <input type="text" x-model="transaction_type" class="form-control form-control-sm" id="invoice_date" min="{{start_date}}" max="{{end_date}}">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" x-model="transaction_type" class="form-control form-control-sm" id="name">
               </div>
-              <button type="submit" class="btn btn-sm btn-primary w-25 mx-2" :disabled="form_loading" x-text="submit_text"></button>
+              <div class="col-md-4">
+                <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
+              </div>
           </form>
         </div>
         <br>
+        <div>
+          <ul style="list-style-type: none;">
+            <template x-for="(value, index) in div_data">
+              <li>
+                <span x-text="index+1"></span>:
+                <ul style="list-style-type: none;">
+                  <template x-for="(v, i) in value">
+                    <li>
+                      <span x-text="i"></span>: <span x-text="v"></span>
+                    </li>
+                  </template>
+                </ul>
+              </li>
+            </template>
+          </ul>
+        </div>
         <h5>Scenario</h5>
         <div>
           <form action="/scenario" method="post" class="row gx-3 gy-2 align-items-end">
@@ -77,11 +89,12 @@
     errors: '',
     transaction_type : 'Hello',
     submit_text: "Submit",
+    div_data: '',
     form_loading: false,
     submit1(event) {
         event.preventDefault();
         this.form_loading = true;
-        this.submit_text = 'Submitting...';
+        this.submit_text = 'Submitting...wait!';
 
         const endpointUrl = "get_transaction_type"
         fetch(endpointUrl, {
@@ -99,13 +112,14 @@
         .then(data => {
           this.errors = data.errors
           this.messages = data.messages
-          if(!this.errors){
-            this.msgShow = true
-            setTimeout(() => this.msgShow = false, 1000)
-            if (!this.save) {
-              setTimeout(() => location.reload() = false, 1500)
-            }
-          }
+          // if(!this.errors){
+          //   this.msgShow = true
+          //   setTimeout(() => this.msgShow = false, 1000)
+          //   if (!this.save) {
+          //     setTimeout(() => location.reload() = false, 1500)
+          //   }
+          // }
+          this.div_data = data;
         })
         .finally(()=>{
             this.form_loading = false;

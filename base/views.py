@@ -169,10 +169,36 @@ def get_transaction_type(request):
         data = json.loads(request.body)
         transaction_type = data.get('transaction_type')
         if transaction_type:
-            ic(transaction_type)
-            return JsonResponse({'tt': "tttt", 'hello': "world"}, safe=False)
+            # ic(transaction_type)
+            # api_url = "https://gw.fbr.gov.pk/pdi/v1/transtypecode" 
+            api_key = os.getenv("API_KEY_FBR")
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}"
+            }
+            # response = requests.get(api_url, headers=headers, timeout=10)
+
+
+
+            base_url = "https://gw.fbr.gov.pk/pdi/v2/SaleTypeToRate"
+
+            date = "24-Feb-2024"
+            trans_type_id = 18
+            origination_supplier = 1
+
+            params = {
+                "date": date,
+                "transTypeId": trans_type_id,
+                "originationSupplier": origination_supplier
+            }
+            response = requests.get(base_url, params=params, timeout=10, headers=headers)
+
+
+            response.raise_for_status()
+            api_data = response.json()
+            return JsonResponse(api_data, safe=False)
         else:
-            return JsonResponse({'rate': 0}, safe=False)
+            return JsonResponse({'response': 0}, safe=False)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
