@@ -258,7 +258,7 @@ def invoice_post(request, id):
 		HttpResponse(fbr_inv_no)
 	except requests.exceptions.RequestException as e:
 		api_data = f"Error calling API: {e}"
-		JsonResponse(api_data)
+		JsonResponse(api_data, safe=False)
 	return HttpResponse(fbr_inv_no)
 
 
