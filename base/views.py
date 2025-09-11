@@ -9,7 +9,7 @@ import fiscalyear
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from datetime import datetime
+import datetime
 
 import requests
 import json
@@ -356,6 +356,7 @@ def get_status(request):
     try:
         data = json.loads(request.body)
         param6 = data.get('param6')
+        param7 = datetime.datetime.strptime(data.get('param7'),"%Y-%m-%d").date()
         if param6:
             api_key = os.getenv("API_KEY_FBR")
             headers = {
@@ -367,8 +368,9 @@ def get_status(request):
 
             params = {
                 "regno": param6,
-                "date": "2025-06-30",
+                "date": param7.strftime("%Y-%m-%d"),
             }
+            ic(param7.strftime("%Y-%m-%d"))
             response = requests.get(base_url, params=params, timeout=30, headers=headers)
             response.raise_for_status()
             api_data = response.json()

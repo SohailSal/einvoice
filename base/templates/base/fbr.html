@@ -105,9 +105,10 @@
               </div>
           </form>
           <form class="row m-1 border border-1 rounded p-1" @submit.prevent="submit8">
-              <div class="col-md-8">
-                <label for="param6" class="form-label">Active Tax Payer?</label>
+              <div class="col-md-8 col-md-4 d-flex align-items-end">
+                <label for="param6" class="form-label">Active Taxpayer?</label>
                 <input type="text" x-model="param6" class="form-control form-control-sm" id="param6">
+                <input type="date" x-model="param7" class="form-control form-control-sm" id="param7">
               </div>
               <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-sm btn-primary" :disabled="form_loading" x-text="submit_text"></button>
@@ -382,6 +383,7 @@
             method: "post",
             body: JSON.stringify({
               param6 : this.param6,
+              param7 : this.param7,
             }),
             headers: {
                 'X-CSRFToken': '{{ csrf_token }}',
